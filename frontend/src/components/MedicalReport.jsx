@@ -91,7 +91,6 @@ export default function MedicalReport() {
                <FileText size={16} className="text-teal-600" />
                <span className="text-sm font-bold">{reports.length} record{reports.length !== 1 ? 's' : ''}</span>
              </div>
-             <span className="text-slate-500 text-sm">found in your medical history</span>
            </div>
         </div>
         <div className="flex items-center gap-3 shrink-0">
