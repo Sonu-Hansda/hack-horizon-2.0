@@ -11,6 +11,7 @@ import MedicalReportPage from '../pages/MedicalReportPage';
 import HistoryPage from '../pages/HistoryPage';
 import MedicalRecordsPage from '../pages/MedicalRecordsPage';
 import ShareQRPage from '../pages/ShareQRPage';
+import SettingsPage from '../pages/SettingsPage';
 
 const AppRoutes = () => {
   return (
@@ -60,6 +61,15 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <ShareQRPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route 
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
               </ProtectedRoute>
             }
           />

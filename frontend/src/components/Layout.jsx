@@ -29,6 +29,9 @@ export default function Layout({ children }) {
     }else if(path==='/share'){
         setActiveTab('Share QR')
     }
+    else if(path==='/settings'){
+        setActiveTab('Settings')
+    }
   }, [location]);
 
   const handleNavigation = (tab) => {
@@ -55,7 +58,7 @@ export default function Layout({ children }) {
         navigate('/share');
         break;
       case 'Settings':
-        navigate('/dashboard');
+        navigate('/settings');
         break;
       default:
         navigate('/dashboard');
