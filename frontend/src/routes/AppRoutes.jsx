@@ -7,6 +7,8 @@ import LandingPage from '../pages/LandingPage';
 import LoginPage from '../pages/LoginPage';
 import SignupPage from '../pages/SignupPage';
 import DashboardPage from '../pages/DashboardPage';
+import MedicalReportPage from '../pages/MedicalReportPage';
+import HistoryPage from '../pages/HistoryPage';
 
 const AppRoutes = () => {
   return (
@@ -26,6 +28,20 @@ const AppRoutes = () => {
                 <DashboardPage />
               </ProtectedRoute>
             }
+          />
+          <Route path="/medicalreport"
+          element={
+            <ProtectedRoute>
+                <MedicalReportPage />
+              </ProtectedRoute>
+          }
+          />
+          <Route path="/history"
+          element={
+            <ProtectedRoute>
+                <HistoryPage />
+              </ProtectedRoute>
+          }
           />
 
           {/* Default redirect */}

@@ -15,10 +15,11 @@ const AuthCard = ({
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="bg-slate-900 text-white p-3 rounded-xl flex items-center justify-center shadow-sm mb-4">
-            <ShieldPlus size={28} strokeWidth={2.5} />
+            {/* <ShieldPlus size={28} strokeWidth={2.5} /> */}
+             <img src='./logo.png' className='h-8'></img>
           </div>
-          <h1 className="font-extrabold text-[20px] tracking-tight text-slate-900">HealthRecord</h1>
-          <p className="text-[11px] font-bold tracking-[0.2em] text-teal-600 uppercase mt-1">Precision Care</p>
+          <h1 className="font-extrabold text-[20px] tracking-tight text-slate-900">Medi Sync</h1>
+          <p className="text-[11px] font-bold tracking-[0.2em] text-teal-600 uppercase mt-1">Track & Care</p>
         </div>
 
         {/* Card */}

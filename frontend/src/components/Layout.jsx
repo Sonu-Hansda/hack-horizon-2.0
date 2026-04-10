@@ -66,11 +66,12 @@ export default function Layout({ children }) {
           <div className="px-6 lg:px-7 py-6 lg:py-8 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-slate-900 text-white p-2 rounded-xl flex items-center justify-center shadow-sm shrink-0">
-                <ShieldPlus size={22} strokeWidth={2.5} />
+                {/* <ShieldPlus size={22} strokeWidth={2.5} /> */}
+                <img src='./logo.png' className='h-8'></img>
               </div>
               <div>
-                <h1 className="font-extrabold text-[17px] tracking-tight text-slate-900">HealthRecord</h1>
-                <p className="text-[10px] font-bold tracking-[0.2em] text-teal-600 uppercase mt-0.5">Precision Care</p>
+                <h1 className="font-extrabold text-[17px] tracking-tight text-slate-900">Medi Sync</h1>
+                <p className="text-[10px] font-bold tracking-[0.2em] text-teal-600 uppercase mt-0.5">Track & Care</p>
               </div>
             </div>
             {/* Close button for mobile */}
