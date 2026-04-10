@@ -8,7 +8,7 @@ export const medicalAPI = {
       formData.append('file', file);
       formData.append('document_type', documentType);
 
-      const response = await api.post('/process-report', formData, {
+      const response = await api.post('/reports/process-report', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -21,7 +21,7 @@ export const medicalAPI = {
 
   getMedicalRecords: async () => {
     try {
-      const response = await api.get('/reports/');
+      const response = await api.get('/reports');
       return response.data;
     } catch (error) {
       throw error.response?.data || { detail: 'Failed to fetch medical records' };

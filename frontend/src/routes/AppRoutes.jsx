@@ -12,6 +12,7 @@ import HistoryPage from '../pages/HistoryPage';
 import MedicalRecordsPage from '../pages/MedicalRecordsPage';
 import ShareQRPage from '../pages/ShareQRPage';
 import SettingsPage from '../pages/SettingsPage';
+import SharedRecordPage from '../pages/SharedRecordPage';
 
 const AppRoutes = () => {
   return (
@@ -22,6 +23,7 @@ const AppRoutes = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/shared/:token" element={<SharedRecordPage />} />
 
           {/* Protected routes */}
           <Route
