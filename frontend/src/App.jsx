@@ -1,9 +1,11 @@
-function App() {
+import React from 'react'
+import Dashboard from './components/DashBoard'
 
+const App = () => {
   return (
-    <>
-     Hello World!
-    </>
+    <div>
+      <Dashboard/>
+    </div>
   )
 }
 
