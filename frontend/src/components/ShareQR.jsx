@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  RefreshCw, Info, CheckCircle2, Circle, ChevronDown, 
-  Activity, PillBottle, FlaskConical, ShieldCheck, Check
+  RefreshCw, Info, CheckCircle2, ChevronDown, 
+  Activity, PillBottle, FlaskConical, ShieldCheck
 } from 'lucide-react';
 
 export default function ShareQR() {
@@ -61,9 +61,6 @@ export default function ShareQR() {
       {/* Header section */}
       <div className="mb-10 text-center lg:text-left pl-0 lg:pl-2">
          <h2 className="text-3xl lg:text-[38px] font-extrabold text-slate-800 tracking-tight mb-3">Secure Record Sharing</h2>
-         <p className="text-slate-500 font-medium text-[15px] max-w-2xl leading-relaxed mx-auto lg:mx-0">
-           Generate a dynamic, encrypted QR code to grant temporary access to medical records. Ensure the provider is authorized before sharing.
-         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-6 lg:gap-10 items-start">

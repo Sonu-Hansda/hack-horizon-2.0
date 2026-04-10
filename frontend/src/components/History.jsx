@@ -13,9 +13,6 @@ export default function History() {
       {/* Header section */}
       <div className="mb-10 text-center lg:text-left pl-0 lg:pl-10">
          <h2 className="text-3xl lg:text-[40px] font-extrabold text-[#085F63] tracking-tight mb-3">Health History Timeline</h2>
-         <p className="text-slate-500 font-medium text-[15px] max-w-2xl leading-relaxed mx-auto lg:mx-0">
-           A chronological voyage of your clinical journey, treatments, and wellness milestones through the years.
-         </p>
       </div>
 
       {/* Timeline Container */}

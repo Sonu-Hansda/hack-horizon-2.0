@@ -3,9 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ConfirmationModal from './ui/ConfirmationModal';
 import {
-   LayoutDashboard, FolderOpen, Pill, BarChart2, Activity,
-  QrCode, Settings, Plus, Bell, HelpCircle, Menu, X, Search,
-  LogOut, User
+   LayoutDashboard, FolderOpen, Activity,
+  QrCode, Settings, Plus, Bell, Menu, X, Search,
+  LogOut
 } from 'lucide-react';
 
 export default function Layout({ children }) {
@@ -123,34 +123,13 @@ export default function Layout({ children }) {
           <nav className="flex-1 px-4 space-y-1.5 mt-2">
             <SidebarItem icon={LayoutDashboard} label="Dashboard" active={activeTab === 'Dashboard'} onClick={() => handleNavigation('Dashboard')} />
             <SidebarItem icon={FolderOpen} label="Records" active={activeTab === 'Medical Records'} onClick={() => handleNavigation('Medical Records')} />
-            {/* <SidebarItem icon={Pill} label="Medications" active={activeTab === 'Medications'} onClick={() => handleNavigation('Medications')} />
-            <SidebarItem icon={BarChart2} label="Reports" active={activeTab === 'Reports'} onClick={() => handleNavigation('Reports')} /> */}
             <SidebarItem icon={Activity} label="History" active={activeTab === 'History'} onClick={() => handleNavigation('History')} />
             <SidebarItem icon={QrCode} label="Share QR" active={activeTab === 'Share QR'} onClick={() => handleNavigation('Share QR')} />
+            <SidebarItem icon={Settings} label="Settings" active={activeTab === 'Settings'} onClick={() => handleNavigation('Settings')} />
           </nav>
 
-          <div className="px-4 pb-6 mt-8">
-            <SidebarItem icon={Settings} label="Settings" active={activeTab === 'Settings'} onClick={() => handleNavigation('Settings')} />
-          </div>
-
-          {/* User Profile & Logout */}
           <div className="p-4 border-t border-slate-100 bg-white sticky bottom-0 space-y-4">
-            {/* User Info */}
-            <div className="flex items-center gap-3 p-3 rounded-[12px] bg-slate-50">
-              <div className="w-10 h-10 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center">
-                <User size={20} strokeWidth={2} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-bold text-slate-800 truncate">
-                  {getUserDisplayName()}
-                </p>
-                <p className="text-[11px] text-slate-500 font-medium truncate">
-                  {user?.email || 'Patient'}
-                </p>
-              </div>
-            </div>
 
-            {/* Logout Button */}
             <button 
               onClick={handleLogoutClick}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-[12px] text-[13px] font-bold text-slate-600 hover:text-red-600 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
@@ -183,8 +162,7 @@ export default function Layout({ children }) {
               </h2>
             ) : (
               <div className="hidden sm:flex items-center gap-6 w-full opacity-100 transition-opacity duration-300">
-                <div className="font-extrabold text-slate-700 text-[16px] tracking-tight whitespace-nowrap">Clinical Curator</div>
-                <div className="flex items-center bg-white/60 border border-slate-200/80 rounded-full px-5 py-2 w-full max-w-lg shadow-[0_2px_8px_-4px_rgba(0,0,0,0.05)] focus-within:bg-white focus-within:border-teal-500/30 transition-all">
+                <div className="flex items-center bg-white/60 border border-slate-200/80 rounded-full px-5 py-2 w-full shadow-[0_2px_8px_-4px_rgba(0,0,0,0.05)] focus-within:bg-white focus-within:border-teal-500/30 transition-all">
                   <Search size={16} className="text-slate-400 mr-3" />
                   <input type="text" placeholder="Search records, doctors, or results..." className="w-full bg-transparent outline-none text-[14px] font-medium placeholder:text-slate-400 text-slate-700" />
                 </div>
@@ -196,9 +174,6 @@ export default function Layout({ children }) {
             <button className="relative text-slate-500 hover:text-slate-700 transition-colors hidden sm:block">
               <Bell size={22} strokeWidth={2} />
               <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-[#F4F7FB] rounded-full translate-x-0.5 -translate-y-0.5"></span>
-            </button>
-            <button className="text-slate-400 hover:text-slate-600 transition-colors bg-slate-200/60 p-2.5 rounded-full hidden sm:block">
-              <HelpCircle size={20} className="fill-slate-200" strokeWidth={2} />
             </button>
             <div className="flex items-center gap-3 cursor-pointer sm:pl-6 sm:border-l border-slate-300 group">
               <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-slate-200 overflow-hidden border-[3px] border-white shadow-sm shrink-0 group-hover:scale-105 transition-transform duration-300">
