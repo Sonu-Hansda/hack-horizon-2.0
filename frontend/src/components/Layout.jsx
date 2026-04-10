@@ -1,23 +1,63 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ConfirmationModal from './ui/ConfirmationModal';
 import {
-  ShieldPlus, LayoutDashboard, FolderOpen, Pill, BarChart2, Activity,
+   LayoutDashboard, FolderOpen, Pill, BarChart2, Activity,
   QrCode, Settings, Plus, Bell, HelpCircle, Menu, X, Search,
   LogOut, User
 } from 'lucide-react';
 
 export default function Layout({ children }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const handleTabChange = (tab) => {
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/dashboard') {
+      setActiveTab('Dashboard');
+    } else if (path === '/medical-records') {
+      setActiveTab('Medical Records');
+    } else if (path === '/medicalreport') {
+      setActiveTab('Reports');
+    } else if (path === '/history') {
+      setActiveTab('History');
+    }
+  }, [location]);
+
+  const handleNavigation = (tab) => {
     setActiveTab(tab);
     setIsSidebarOpen(false);
+    
+    switch(tab) {
+      case 'Dashboard':
+        navigate('/dashboard');
+        break;
+      case 'Medical Records':
+        navigate('/medical-records');
+        break;
+      case 'Reports':
+        navigate('/medicalreport');
+        break;
+      case 'History':
+        navigate('/history');
+        break;
+      case 'Medications':
+        navigate('/dashboard');
+        break;
+      case 'Share QR':
+        navigate('/dashboard');
+        break;
+      case 'Settings':
+        navigate('/dashboard');
+        break;
+      default:
+        navigate('/dashboard');
+    }
   };
 
   const handleLogoutClick = () => {
@@ -38,11 +78,11 @@ export default function Layout({ children }) {
     if (!user) return 'Welcome';
     
     if (user.full_name) {
-      return user.full_name.split(' ')[0]; // First name only
+      return user.full_name.split(' ')[0];
     }
     
     if (user.email) {
-      return user.email.split('@')[0]; // Username part of email
+      return user.email.split('@')[0];
     }
     
     return 'User';
@@ -51,7 +91,6 @@ export default function Layout({ children }) {
   return (
     <div className="flex h-screen bg-[#F4F7FB] font-sans text-slate-800 overflow-hidden">
       
-      {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden"
@@ -59,14 +98,12 @@ export default function Layout({ children }) {
         />
       )}
 
-      {/* Sidebar */}
       <aside className={`fixed lg:relative top-0 left-0 w-72 lg:w-64 bg-white border-r border-slate-200 flex flex-col justify-between h-full shadow-[2px_0_12px_-6px_rgba(0,0,0,0.1)] z-50 shrink-0 transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex flex-col h-full overflow-y-auto custom-scrollbar">
           {/* Logo */}
           <div className="px-6 lg:px-7 py-6 lg:py-8 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-slate-900 text-white p-2 rounded-xl flex items-center justify-center shadow-sm shrink-0">
-                {/* <ShieldPlus size={22} strokeWidth={2.5} /> */}
                 <img src='./logo.png' className='h-8'></img>
               </div>
               <div>
@@ -82,16 +119,16 @@ export default function Layout({ children }) {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 space-y-1.5 mt-2">
-            <SidebarItem icon={LayoutDashboard} label="Dashboard" active={activeTab === 'Dashboard'} onClick={() => handleTabChange('Dashboard')} />
-            <SidebarItem icon={FolderOpen} label="Medical Records" active={activeTab === 'Medical Records'} onClick={() => handleTabChange('Medical Records')} />
-            <SidebarItem icon={Pill} label="Medications" active={activeTab === 'Medications'} onClick={() => handleTabChange('Medications')} />
-            <SidebarItem icon={BarChart2} label="Reports" active={activeTab === 'Reports'} onClick={() => handleTabChange('Reports')} />
-            <SidebarItem icon={Activity} label="History" active={activeTab === 'History'} onClick={() => handleTabChange('History')} />
-            <SidebarItem icon={QrCode} label="Share QR" active={activeTab === 'Share QR'} onClick={() => handleTabChange('Share QR')} />
+            <SidebarItem icon={LayoutDashboard} label="Dashboard" active={activeTab === 'Dashboard'} onClick={() => handleNavigation('Dashboard')} />
+            <SidebarItem icon={FolderOpen} label="Medical Records" active={activeTab === 'Medical Records'} onClick={() => handleNavigation('Medical Records')} />
+            <SidebarItem icon={Pill} label="Medications" active={activeTab === 'Medications'} onClick={() => handleNavigation('Medications')} />
+            <SidebarItem icon={BarChart2} label="Reports" active={activeTab === 'Reports'} onClick={() => handleNavigation('Reports')} />
+            <SidebarItem icon={Activity} label="History" active={activeTab === 'History'} onClick={() => handleNavigation('History')} />
+            <SidebarItem icon={QrCode} label="Share QR" active={activeTab === 'Share QR'} onClick={() => handleNavigation('Share QR')} />
           </nav>
 
           <div className="px-4 pb-6 mt-8">
-            <SidebarItem icon={Settings} label="Settings" active={activeTab === 'Settings'} onClick={() => handleTabChange('Settings')} />
+            <SidebarItem icon={Settings} label="Settings" active={activeTab === 'Settings'} onClick={() => handleNavigation('Settings')} />
           </div>
 
           {/* User Profile & Logout */}

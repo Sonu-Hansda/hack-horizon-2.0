@@ -9,6 +9,7 @@ import SignupPage from '../pages/SignupPage';
 import DashboardPage from '../pages/DashboardPage';
 import MedicalReportPage from '../pages/MedicalReportPage';
 import HistoryPage from '../pages/HistoryPage';
+import MedicalRecordsPage from '../pages/MedicalRecordsPage';
 
 const AppRoutes = () => {
   return (
@@ -29,21 +30,30 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/medicalreport"
-          element={
-            <ProtectedRoute>
+          <Route 
+            path="/medicalreport"
+            element={
+              <ProtectedRoute>
                 <MedicalReportPage />
               </ProtectedRoute>
-          }
+            }
           />
-          <Route path="/history"
-          element={
-            <ProtectedRoute>
+          <Route 
+            path="/history"
+            element={
+              <ProtectedRoute>
                 <HistoryPage />
               </ProtectedRoute>
-          }
+            }
           />
-
+          <Route 
+            path="/medical-records"
+            element={
+              <ProtectedRoute>
+                <MedicalReportPage />
+              </ProtectedRoute>
+            }
+          />
           {/* Default redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
