@@ -2,15 +2,54 @@ from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 import shutil, os
 from typing import Optional, List
 from sqlmodel import Session, select
-
+from datetime import datetime, timedelta
 from app.db.session import get_session
 from app.db.models import Report
 from app.services.report_pipeline import process_report
+from sqlalchemy import func
 
 router = APIRouter()
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+@router.get("/total-reports")
+def total_reports(session: Session = Depends(get_session)):
+    count = session.exec(
+        select(func.count()).select_from(Report)
+    ).one()
+
+    return {"total_reports": count}
+
+@router.get("/recent-reports")
+def recent_reports(session: Session = Depends(get_session)):
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+
+    count = session.exec(
+        select(func.count())
+        .select_from(Report)
+        .where(Report.uploaded_at >= thirty_days_ago)
+    ).one()
+
+    return {"recent_reports": count}
+
+@router.get("/active-medications")
+def active_medications(session: Session = Depends(get_session)):
+
+    latest_prescription = session.exec(
+        select(Report)
+        .where(Report.document_type == "prescription")
+        .order_by(Report.uploaded_at.desc())
+    ).first()
+
+    if not latest_prescription or not latest_prescription.extracted_data:
+        return {"active_medications": 0}
+
+    medications = latest_prescription.extracted_data.get("medications", [])
+
+    return {
+        "active_medications": len(medications)
+    }
 
 @router.get("/reports", response_model=List[dict])
 async def get_reports(
