@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 import {
   ShieldPlus,
@@ -27,7 +26,6 @@ const TypeWriter = ({ strings }) => {
 };
 
 export default function LandingPage({ onEnterApp }) {
-  
   const healthWords = [
     "Medicine",
     "Wellness",
@@ -553,20 +551,20 @@ function Navbar({ onEnterApp }) {
       <div className="flex items-center gap-4">
         <div className="hidden sm:flex items-center gap-3">
           {/* Sign In */}
-          <Link to='/login'><button
+          <Link to='/login'
             onClick={onEnterApp}
             className="px-5 py-2.5 rounded-full border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-100 hover:border-slate-400 transition-all duration-200 active:scale-95"
           >
             Sign In
-          </button></Link>
+          </Link>
 
           {/* Sign Up */}
-          <Link to='/signup'><button
+          <button
             onClick={onEnterApp}
             className="px-5 py-2.5 rounded-full bg-slate-900 text-white font-semibold text-sm shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:bg-slate-800 hover:shadow-[0_6px_18px_rgba(0,0,0,0.2)] transition-all duration-200 active:scale-95"
           >
             Sign Up
-          </button></Link>
+          </button>
         </div>
 
         <button className="bg-white hover:bg-slate-50 w-12 h-12 rounded-full flex gap-[3px] flex-col justify-center items-center shadow-[0_4px_20px_rgb(0,0,0,0.06)] border border-slate-200 transition-all active:scale-95">
