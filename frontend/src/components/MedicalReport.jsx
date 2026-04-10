@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ChevronRight, Filter, FileText, Upload,
-  Calendar, User, Pill, FileImage, Download, Eye
+  Calendar, User, Pill, FileImage, Download, Eye, TestTube
 } from 'lucide-react';
 import { medicalAPI } from '../api';
 import UploadMedicalRecordModal from './ui/UploadMedicalRecordModal';
 import RecordDetailModal from './ui/RecordDetailModal';
-import axios from 'axios';
 
 export default function MedicalReport() {
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -23,19 +22,9 @@ export default function MedicalReport() {
     setShowUploadModal(false);
   };
 
-  const[summary,setSummary]=useState("");
-
-  
-
   // Helper to get backend base URL
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
   const backendBaseUrl = apiBaseUrl.replace('/api', '');
-
-  const fecthSummary=async(report_id)=>{
-    const res=await axios.get(`${backendBaseUrl}/reports/summary/${report_id}`)
-    console.log(res.data.answer);
-    setSummary(res.data.answer);
-  }
 
   const handleUploadSuccess = (result) => {
     fetchReports();
@@ -67,7 +56,6 @@ export default function MedicalReport() {
   // Fetch reports on component mount
   useEffect(() => {
     fetchReports();
-    fecthSummary(1); // Fetch summary for the first report as an example
   }, []);
 
   const formatDate = (dateString) => {
@@ -162,235 +150,145 @@ export default function MedicalReport() {
             {reports.map((report) => (
               <div 
                 key={report.id} 
-                className={`rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
+                className={`rounded-[20px] border overflow-hidden transition-all duration-300 flex flex-col group cursor-pointer ${
                   report.document_type === 'prescription' 
-                    ? 'bg-gradient-to-br from-teal-50/80 to-emerald-50/60 border border-teal-100/50' 
-                    : 'bg-gradient-to-br from-blue-50/80 to-cyan-50/60 border border-blue-100/50'
+                    ? 'bg-indigo-50/60 border-indigo-200/50 hover:border-indigo-300 hover:shadow-lg hover:shadow-indigo-100/50' 
+                    : 'bg-teal-50/60 border-teal-200/50 hover:border-teal-300 hover:shadow-lg hover:shadow-teal-100/50'
                 }`}
+                onClick={() => openDetailModal(report)}
               >
-                {/* Image Cover Section */}
-                <div className="h-32 relative overflow-hidden">
-                  {report.file_url ? (
-                    // Actual image with overlay
-                    <>
-                      <img 
-                        src={`${backendBaseUrl}${report.file_url}`}
-                        alt={report.file_name || "Medical document"}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          // If image fails to load, show fallback
-                          e.target.style.display = 'none';
-                          e.target.nextElementSibling.style.display = 'block';
-                        }}
-                      />
-                      <div className={`absolute inset-0 ${
-                        report.document_type === 'prescription' 
-                          ? 'bg-gradient-to-r from-teal-400/20 to-emerald-400/10' 
-                          : 'bg-gradient-to-r from-blue-400/20 to-cyan-400/10'
-                      }`} style={{ display: 'none' }}>
-                        <div className="absolute top-4 left-4">
-                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                            report.document_type === 'prescription' 
-                              ? 'bg-teal-500 text-white' 
-                              : 'bg-blue-500 text-white'
-                          }`}>
-                            {report.document_type === 'prescription' ? 'PRESCRIPTION' : 'DIAGNOSTIC'}
-                          </span>
-                        </div>
-                        <div className="absolute bottom-4 right-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                            report.document_type === 'prescription' 
-                              ? 'bg-teal-100 text-teal-600' 
-                              : 'bg-blue-100 text-blue-600'
-                          }`}>
-                            {getDocumentIcon(report.document_type)}
-                          </div>
-                        </div>
+                {/* Header Strip */}
+                <div className={`p-5 pb-4 border-b ${
+                  report.document_type === 'prescription' 
+                    ? 'border-indigo-100/50' 
+                    : 'border-teal-100/50'
+                }`}>
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3.5">
+                      <div className={`w-11 h-11 rounded-[14px] flex items-center justify-center shrink-0 shadow-sm ${
+                        report.document_type === 'prescription' ? 'bg-indigo-100 text-indigo-600' : 'bg-teal-100 text-teal-600'
+                      }`}>
+                        {getDocumentIcon(report.document_type)}
                       </div>
-                    </>
-                  ) : (
-                    // Fallback gradient background
-                    <div className={`absolute inset-0 ${
-                      report.document_type === 'prescription' 
-                        ? 'bg-gradient-to-r from-teal-400/20 to-emerald-400/10' 
-                        : 'bg-gradient-to-r from-blue-400/20 to-cyan-400/10'
+                      <div className="min-w-0">
+                        <h3 className="font-extrabold text-slate-800 capitalize text-[16px] truncate tracking-tight">{report.document_type}</h3>
+                        <p className="text-[13px] text-slate-500 font-medium truncate max-w-[140px] tracking-tight">{report.file_name}</p>
+                      </div>
+                    </div>
+                    <span className={`px-2.5 py-1 text-[10px] font-black rounded-full uppercase tracking-widest shrink-0 ${
+                      report.document_type === 'prescription' ? 'bg-indigo-100 text-indigo-700' : 'bg-teal-100 text-teal-700'
                     }`}>
-                      <div className="absolute top-4 left-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                          report.document_type === 'prescription' 
-                            ? 'bg-teal-500 text-white' 
-                            : 'bg-blue-500 text-white'
-                        }`}>
-                          {report.document_type === 'prescription' ? 'PRESCRIPTION' : 'DIAGNOSTIC'}
-                        </span>
-                      </div>
-                      <div className="absolute bottom-4 right-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                          report.document_type === 'prescription' 
-                            ? 'bg-teal-100 text-teal-600' 
-                            : 'bg-blue-100 text-blue-600'
-                        }`}>
-                          {getDocumentIcon(report.document_type)}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Content Section */}
-                <div className="p-5">
-                  {/* Date and Time */}
-                  <div className="flex items-center gap-2 text-sm mb-3">
-                    <Calendar size={14} className={
-                      report.document_type === 'prescription' ? 'text-teal-500' : 'text-blue-500'
-                    } />
-                    <span className="font-medium text-slate-700">{formatDate(report.uploaded_at)}</span>
+                      {report.document_type === 'prescription' ? 'RX' : 'DIAG'}
+                    </span>
                   </div>
-
-                  {/* Content based on document type */}
-                  {report.extracted_data && (
-                    <div className="space-y-3">
-                      {/* Prescription Display */}
-                      {report.document_type === 'prescription' && (
-                        <>
-                          {report.extracted_data.doctor_name && (
-                            <div>
-                              <div className="flex items-center gap-2 mb-1">
-                                <User size={14} className="text-teal-400" />
-                                <span className="text-sm font-semibold text-slate-800">Dr. {report.extracted_data.doctor_name}</span>
+                </div>
+                
+                {/* Body Content */}
+                <div className="p-5 flex-1 flex flex-col">
+                  {/* Date Badge */}
+                  <div className={`flex items-center gap-2.5 text-[12.5px] mb-5 px-3 py-2 rounded-xl border w-max ${
+                    report.document_type === 'prescription'
+                      ? 'bg-white/60 text-indigo-600 border-indigo-100/50'
+                      : 'bg-white/60 text-teal-600 border-teal-100/50'
+                  }`}>
+                    <Calendar size={14} className={report.document_type === 'prescription' ? 'text-indigo-400' : 'text-teal-400'} />
+                    <span className="font-bold tracking-tight">{formatDate(report.uploaded_at)}</span>
+                  </div>
+                  
+                  <div className="flex-1 space-y-4">
+                      {/* Prescription layout */}
+                      {report.document_type === 'prescription' && report.extracted_data && (
+                          <>
+                            {report.extracted_data.doctor_name && (
+                              <div className="flex items-start gap-3">
+                                <div className="p-1.5 rounded-lg bg-white/60 border border-white/80 mt-0.5">
+                                  <User size={14} className={report.document_type === 'prescription' ? 'text-indigo-400' : 'text-teal-400'} />
+                                </div>
+                                <div>
+                                  <span className="text-[10px] block font-black tracking-widest uppercase text-slate-500 mb-0.5">Prescribed By</span>
+                                  <span className="text-[14.5px] font-bold text-slate-800 tracking-tight">Dr. {report.extracted_data.doctor_name}</span>
+                                </div>
                               </div>
-                              {report.extracted_data.notes && (
-                                <p className="text-xs text-slate-600 line-clamp-2">{report.extracted_data.notes}</p>
-                              )}
-                            </div>
-                          )}
-                          
-                          {/* Medications Preview for Prescriptions */}
-                          {report.extracted_data.medications && report.extracted_data.medications.length > 0 && (
-                            <div className="text-xs">
-                              <div className="flex items-center gap-1 mb-1">
-                                <Pill size={12} className="text-teal-400" />
-                                <span className="font-medium text-slate-700">Medications:</span>
-                              </div>
-                              <div className="flex flex-wrap gap-1">
-                                {report.extracted_data.medications.slice(0, 3).map((med, idx) => (
-                                  <span 
-                                    key={idx} 
-                                    className="px-2 py-0.5 rounded-full bg-teal-100 text-teal-700"
-                                  >
-                                    {med.name}
-                                  </span>
-                                ))}
-                                {report.extracted_data.medications.length > 3 && (
-                                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                                    +{report.extracted_data.medications.length - 3} more
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </>
-                      )}
-
-                      {/* Diagnostic Report Display */}
-                      {report.document_type === 'diagnostic' && (
-                        <>
-                          {/* Patient Name */}
-                          {report.extracted_data.patient_name && (
-                            <div>
-                              <div className="flex items-center gap-2 mb-1">
-                                <User size={14} className="text-blue-400" />
-                                <span className="text-sm font-semibold text-slate-800">{report.extracted_data.patient_name}</span>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Lab Results Preview */}
-                          {report.extracted_data.lab_results && report.extracted_data.lab_results.length > 0 && (
-                            <div className="text-xs">
-                              <div className="flex items-center gap-1 mb-2">
-                                <FileImage size={12} className="text-blue-400" />
-                                <span className="font-medium text-slate-700">Lab Tests: {report.extracted_data.lab_results.length} tests</span>
-                              </div>
-                              
-                              {/* Show abnormal results first */}
-                              {(() => {
-                                const abnormalResults = report.extracted_data.lab_results.filter(r => r.status && r.status !== 'normal');
-                                const normalResults = report.extracted_data.lab_results.filter(r => !r.status || r.status === 'normal');
-                                
-                                // Show up to 2 abnormal results, or if none, show 1 normal result
-                                const displayResults = abnormalResults.length > 0 
-                                  ? abnormalResults.slice(0, 2)
-                                  : normalResults.slice(0, 1);
-                                
-                                const remainingCount = report.extracted_data.lab_results.length - displayResults.length;
-                                
-                                return (
-                                  <div className="space-y-1.5">
-                                    {displayResults.map((result, idx) => (
-                                      <div key={idx} className="flex items-center justify-between">
-                                        <div className="flex items-center gap-1.5">
-                                          <div className={`w-1.5 h-1.5 rounded-full ${
-                                            result.status === 'low' ? 'bg-amber-500' :
-                                            result.status === 'high' ? 'bg-red-500' :
-                                            'bg-emerald-500'
-                                          }`}></div>
-                                          <span className="text-slate-700 truncate max-w-[100px]">{result.test}</span>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                          <span className="font-medium text-slate-800">{result.value}</span>
-                                          <span className="text-slate-500">{result.unit}</span>
-                                          {result.status && result.status !== 'normal' && (
-                                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
-                                              result.status === 'low' ? 'bg-amber-100 text-amber-700' :
-                                              result.status === 'high' ? 'bg-red-100 text-red-700' :
-                                              'bg-emerald-100 text-emerald-700'
-                                            }`}>
-                                              {result.status}
-                                            </span>
-                                          )}
-                                        </div>
-                                      </div>
-                                    ))}
-                                    
-                                    {remainingCount > 0 && (
-                                      <div className="pt-1 border-t border-slate-100">
-                                        <span className="text-slate-500">+{remainingCount} more tests</span>
-                                      </div>
-                                    )}
+                            )}
+                            {report.extracted_data.medications && report.extracted_data.medications.length > 0 && (
+                              <div className="flex items-start gap-3">
+                                <div className="p-1.5 rounded-lg bg-white/60 border border-white/80 mt-0.5">
+                                  <Pill size={14} className={report.document_type === 'prescription' ? 'text-indigo-400' : 'text-teal-400'} />
+                                </div>
+                                <div className="w-full">
+                                  <span className="text-[10px] block font-black tracking-widest uppercase text-slate-500 mb-1.5">Medications</span>
+                                  <div className="flex flex-wrap gap-1.5">
+                                      {report.extracted_data.medications.slice(0, 3).map((med, idx) => (
+                                         <span key={idx} className="bg-white/80 text-indigo-700 text-[12px] px-2.5 py-1 rounded-lg font-bold border border-indigo-100/50">{med.name}</span>
+                                      ))}
+                                      {report.extracted_data.medications.length > 3 && (
+                                          <span className="bg-white/60 text-slate-600 text-[12px] px-2.5 py-1 rounded-lg font-bold border border-slate-200/50">+{report.extracted_data.medications.length - 3}</span>
+                                      )}
                                   </div>
-                                );
-                              })()}
-                            </div>
-                          )}
-
-                          {/* Critical Alerts Indicator */}
-                          {report.extracted_data.critical_alerts && (
-                            <div className="text-xs">
-                              <div className="flex items-center gap-1">
-                                <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                                <span className="font-medium text-red-600">Critical alerts present</span>
+                                </div>
                               </div>
-                            </div>
-                          )}
-                        </>
+                            )}
+                          </>
                       )}
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-2 pt-4 mt-4 border-t border-slate-100/50">
-                    <button 
-                      onClick={() => openDetailModal(report)}
-                      className="flex-1 flex items-center justify-center gap-1 py-2 px-3 text-sm font-medium text-slate-700 hover:bg-white/50 rounded-lg transition-colors"
-                    >
-                      <Eye size={14} />
-                      View
-                    </button>
-                    <button className="flex-1 flex items-center justify-center gap-1 py-2 px-3 text-sm font-medium text-slate-700 hover:bg-white/50 rounded-lg transition-colors">
-                      <Download size={14} />
-                      Download
-                    </button>
+                      
+                      {/* Diagnostic layout */}
+                      {report.document_type === 'diagnostic' && report.extracted_data && (
+                          <>
+                             {report.extracted_data.patient_name && (
+                              <div className="flex items-start gap-3">
+                                <div className="p-1.5 rounded-lg bg-white/60 border border-white/80 mt-0.5">
+                                    <User size={14} className={report.document_type === 'prescription' ? 'text-indigo-400' : 'text-teal-400'} />
+                                </div>
+                                <div>
+                                   <span className="text-[10px] block font-black tracking-widest uppercase text-slate-500 mb-0.5">Patient Details</span>
+                                   <span className="text-[14.5px] font-bold text-slate-800 tracking-tight">{report.extracted_data.patient_name}</span>
+                                </div>
+                              </div>
+                            )}
+                            {report.extracted_data.lab_results && report.extracted_data.lab_results.length > 0 && (
+                              <div className="flex items-start gap-3">
+                                 <div className="p-1.5 rounded-lg bg-white/60 border border-white/80 mt-0.5">
+                                    <TestTube size={14} className={report.document_type === 'prescription' ? 'text-indigo-400' : 'text-teal-400'} />
+                                 </div>
+                                 <div className="w-full">
+                                    <div className="flex justify-between items-center mb-1.5">
+                                        <span className="text-[10px] font-black tracking-widest uppercase text-slate-500">Lab Results</span>
+                                        <span className="text-[10px] font-bold text-teal-700 bg-white/80 border border-teal-100/50 px-2 py-0.5 rounded-md">{report.extracted_data.lab_results.length} Tests</span>
+                                    </div>
+                                    <div className="space-y-1.5 mt-2 bg-white/50 p-2.5 rounded-xl border border-white/80">
+                                        {report.extracted_data.lab_results.slice(0, 2).map((res, idx) => (
+                                            <div key={idx} className="flex justify-between items-center text-[13px]">
+                                                <span className="text-slate-600 font-medium truncate max-w-[120px]">{res.test}</span>
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="font-bold text-slate-800">{res.value}</span>
+                                                    <span className="text-xs text-slate-500 font-medium">{res.unit}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {report.extracted_data.lab_results.length > 2 && (
+                                            <div className="text-center pt-1 border-t border-teal-100/30 mt-1">
+                                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">+{report.extracted_data.lab_results.length - 2} more entries</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                 </div>
+                              </div>
+                            )}
+                          </>
+                      )}
+                  </div>
+                  
+                  {/* Action Footer */}
+                  <div className={`mt-6 pt-5 border-t flex gap-3 ${
+                    report.document_type === 'prescription' ? 'border-indigo-100/50' : 'border-teal-100/50'
+                  }`}>
+                     <button className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-[13px] font-extrabold focus:outline-none transition-all group-hover:-translate-y-0.5 shadow-sm border ${
+                       report.document_type === 'prescription'
+                         ? 'bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50 hover:border-indigo-300'
+                         : 'bg-white text-teal-700 border-teal-200 hover:bg-teal-50 hover:border-teal-300'
+                     }`}>
+                         <Eye size={15} strokeWidth={2.5} /> View Details
+                     </button>
                   </div>
                 </div>
               </div>

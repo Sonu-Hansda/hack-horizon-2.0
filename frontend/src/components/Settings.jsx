@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Cloud, CheckCircle2 } from 'lucide-react';
-import SetupBanner from './settings/SetupBanner';
+import { Cloud, CheckCircle2, ChevronRight } from 'lucide-react';
 import SetupModal from './settings/SetupModal';
-import { 
-  BiometricsSection, 
-  VitalsSection, 
-  LifestyleSection, 
-  HistorySection 
+import {
+  BiometricsSection,
+  VitalsSection,
+  LifestyleSection,
+  HistorySection
 } from './settings/SettingsSections';
-import Button from './ui/Button';
 import patientAPI from '../api/patient';
 
 export default function Settings() {
@@ -69,10 +67,10 @@ export default function Settings() {
     }
   };
 
-  const isProfileComplete = 
-    formData.age !== '' && 
-    formData.bloodGroup !== '' && 
-    formData.height !== '' && 
+  const isProfileComplete =
+    formData.age !== '' &&
+    formData.bloodGroup !== '' &&
+    formData.height !== '' &&
     formData.weight !== '';
 
   const handleChange = (key, value) => {
@@ -83,7 +81,7 @@ export default function Settings() {
     try {
       setIsSaving(true);
       setSaveComplete(false);
-      
+
       const payload = {
         age: formData.age ? parseInt(formData.age) : null,
         sex: formData.sex,
@@ -103,7 +101,7 @@ export default function Settings() {
       };
 
       await patientAPI.updateProfile(payload);
-      
+
       setSaveComplete(true);
       setTimeout(() => setSaveComplete(false), 3000);
     } catch (error) {
@@ -132,14 +130,35 @@ export default function Settings() {
   }
 
   return (
-    <div className="max-w-[1000px] mx-auto space-y-8 lg:space-y-10 pb-20 pt-4 fadeIn relative">
-      
-      <div className="mb-8 text-left">
-        <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">Clinical Data Entry</h2>
+    <div className="max-w-[1440px] mx-auto space-y-12 lg:space-y-16 pb-24 pt-6 fadeIn relative">
+
+      <div className="mb-4 pl-0 lg:pl-2">
+        <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.25em] uppercase mb-4">
+          <span className="text-slate-400">MediSync</span>
+          <ChevronRight size={12} className="text-slate-300" strokeWidth={3} />
+          <span className="text-[#00BFA5]">Patient Profile</span>
+        </div>
+        <h2 className="text-3xl lg:text-[44px] font-black text-slate-900 tracking-tight leading-none mb-4">
+          Clinical Data Vault
+        </h2>
       </div>
 
       {!isProfileComplete && (
-        <SetupBanner onStartSetup={handleStartSetup} />
+        <div className="relative overflow-hidden rounded-[32px] bg-slate-900 p-8 lg:p-10 shadow-2xl shadow-slate-900/20">
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="text-center md:text-left">
+              <h3 className="text-xl lg:text-2xl font-black text-white mb-2 tracking-tight">Complete Your Clinical Profile</h3>
+              <p className="text-slate-400 font-medium text-[15px]">Provide essential biometrics to enable precision health monitoring.</p>
+            </div>
+            <button
+              onClick={handleStartSetup}
+              className="px-10 py-5 bg-[#00BFA5] text-slate-900 rounded-2xl font-black text-[14px] uppercase tracking-widest hover:scale-[1.05] transition-all active:scale-95 shadow-xl shadow-[#00BFA5]/20"
+            >
+              Initialize Setup
+            </button>
+          </div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+        </div>
       )}
 
       <div className="space-y-8 lg:space-y-10">
@@ -149,31 +168,40 @@ export default function Settings() {
         <HistorySection formData={formData} onChange={handleChange} />
       </div>
 
-      <div className="mt-12 flex flex-col md:flex-row items-center justify-between border-t border-slate-200/80 pt-10 px-2 gap-8">
-        <div className="flex items-center gap-3 text-slate-500">
-          {saveComplete ? <CheckCircle2 size={18} className="text-[#0E7B62]" /> : <Cloud size={18} />}
-          <span className="text-sm font-bold tracking-wide">
-            {saveComplete ? "Profile synchronized successfully" : "Changes are saved to your global patient record"}
-          </span>
+      <div className="mt-20 flex flex-col md:flex-row items-center justify-between bg-slate-50/50 rounded-[40px] p-8 lg:p-10 border border-slate-100 gap-10">
+        <div className="flex items-center gap-4 text-slate-500">
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all duration-500 ${saveComplete ? 'bg-emerald-50 text-[#00BFA5] border-emerald-100' : 'bg-white text-slate-300 border-slate-100 shadow-sm'}`}>
+            {saveComplete ? <CheckCircle2 size={24} strokeWidth={2.5} /> : <Cloud size={24} strokeWidth={2} />}
+          </div>
+          <div>
+            <p className={`text-[15px] font-black tracking-tight ${saveComplete ? 'text-slate-900' : 'text-slate-500'}`}>
+              {saveComplete ? "Sync Complete" : "Cloud Synchronization"}
+            </p>
+            <p className="text-[12px] font-medium text-slate-400">
+              {saveComplete ? "All parameters verified and encrypted." : "Changes are securely saved to your patient record."}
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-4 w-full md:w-auto">
-          <Button variant="secondary" className="flex-1 md:flex-none" onClick={fetchProfile}>
-            Reset Changes
-          </Button>
-          <Button 
-            variant="teal" 
-            onClick={handleSave}
-            loading={isSaving}
-            className="flex-1 md:flex-none min-w-[200px]"
+          <button
+            onClick={fetchProfile}
+            className="px-8 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-black text-[13px] uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
           >
-            {saveComplete ? "Saved Successfully" : "Save Patient Profile"}
-          </Button>
+            Reset
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className={`px-12 py-5 rounded-[22px] font-black text-[14px] uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] min-w-[240px] ${saveComplete ? 'bg-[#00BFA5] text-slate-900 shadow-[#00BFA5]/20' : 'bg-slate-900 text-white shadow-slate-900/30'}`}
+          >
+            {isSaving ? "Saving..." : saveComplete ? "Verification Done" : "Save Clinical Record"}
+          </button>
         </div>
       </div>
 
-      <SetupModal 
-        isOpen={isSetupModalOpen} 
+      <SetupModal
+        isOpen={isSetupModalOpen}
         onClose={() => setIsSetupModalOpen(false)}
         formData={formData}
         onChange={handleChange}
