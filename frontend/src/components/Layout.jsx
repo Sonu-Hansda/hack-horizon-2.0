@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import ConfirmationModal from './ui/ConfirmationModal';
 import {
   LayoutDashboard, FolderOpen, Activity,
-  QrCode, Settings, Plus, Bell, Menu, X, Search,
+  QrCode, Settings, Plus, Menu, X, Search,
   LogOut
 } from 'lucide-react';
 
@@ -15,6 +15,7 @@ export default function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [language, setLanguage] = useState('EN');
 
   useEffect(() => {
     const path = location.pathname;
@@ -181,10 +182,28 @@ export default function Layout({ children }) {
           </div>
 
           <div className="flex items-center gap-4 lg:gap-6 ml-4">
-            <button className="relative text-slate-500 hover:text-slate-700 transition-colors hidden sm:block">
-              <Bell size={22} strokeWidth={2} />
-              <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-[#F4F7FB] rounded-full translate-x-0.5 -translate-y-0.5"></span>
-            </button>
+            {/* Language Toggle */}
+            <div className="flex items-center bg-white border border-slate-200 rounded-lg p-0.5 shadow-sm overflow-hidden">
+              <button
+                onClick={() => setLanguage('EN')}
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-md transition-all ${language === 'EN'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                  }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLanguage('HI')}
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-md transition-all ${language === 'HI'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                  }`}
+              >
+                हि
+              </button>
+            </div>
+
             <div className="flex items-center gap-3 cursor-pointer sm:pl-6 sm:border-l border-slate-300 group">
               <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-slate-200 overflow-hidden border-[3px] border-white shadow-sm shrink-0 group-hover:scale-105 transition-transform duration-300">
                 {user?.email ? (
