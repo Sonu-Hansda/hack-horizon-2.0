@@ -102,6 +102,21 @@ export const medicalAPI = {
       throw error.response?.data || { detail: 'Failed to fetch report summary' };
     }
   },
+
+  chatReport: async (reportId, question) => {
+    try {
+      const formData = new FormData();
+      formData.append('question', question);
+      const response = await api.post(`/report/${reportId}/chat`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { detail: 'Failed to chat with report' };
+    }
+  },
 };
 
 export default medicalAPI;

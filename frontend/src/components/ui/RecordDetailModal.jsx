@@ -1,11 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, User, Pill, FileText, TestTube, FileImage, AlertTriangle, Sparkles, Maximize, Mic } from 'lucide-react';
+import { X, Calendar, User, Pill, FileText, TestTube, FileImage, AlertTriangle, Sparkles, Maximize, MessageSquare, Send, ChevronLeft, Bot, Loader } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { medicalAPI } from '../../api';
 
 const RecordDetailModal = ({ isOpen, onClose, report }) => {
   const [summary, setSummary] = useState(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [isImageFullscreen, setIsImageFullscreen] = useState(false);
+
+  // Chat States
+  const [viewMode, setViewMode] = useState('details'); // 'details' | 'chat'
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const messagesEndRef = React.useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages, viewMode]);
+
+  const handleSendMessage = async (e) => {
+    e?.preventDefault();
+    if (!chatInput.trim() || isSending) return;
+
+    const userMsg = chatInput.trim();
+    setChatInput('');
+    setChatMessages((prev) => [...prev, { role: 'user', content: userMsg }]);
+    setIsSending(true);
+
+    try {
+      const res = await medicalAPI.chatReport(report.id, userMsg);
+      setChatMessages((prev) => [...prev, { role: 'ai', content: res.answer || "I could not process an answer from the document." }]);
+    } catch (error) {
+      console.error("Chat error:", error);
+      setChatMessages((prev) => [...prev, { role: 'ai', content: "An error occurred connecting to the clinical network." }]);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  // Reset chat when opened/closed
+  useEffect(() => {
+    if (!isOpen) {
+      setViewMode('details');
+      setChatMessages([]);
+      setChatInput('');
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const fetchSummaryData = async () => {
@@ -266,145 +311,225 @@ const RecordDetailModal = ({ isOpen, onClose, report }) => {
 
             </div>
 
-            {/* Right Side - Details */}
-            <div className="lg:w-2/5 p-6">
-              {/* <h4 className="text-sm font-semibold text-slate-700 mb-4">Extracted Information</h4> */}
-
-              {/* Date and Time */}
-              {/* <div className="mb-5">
-                <div className="flex items-center gap-2 text-slate-600 mb-1">
-                  <Calendar size={16} className={
-                    isPrescription ? 'text-teal-500' : 'text-blue-500'
-                  } />
-                  <span className="font-medium">Date & Time</span>
-                </div>
-                <p className="text-slate-800 font-semibold">{formatDate(report.uploaded_at)}</p>
-              </div> */}
-
-              {/* Doctor Name */}
-              {extractedData.doctor_name && (
-                <div className="mb-5">
-                  <div className="flex items-center gap-2 text-slate-600 mb-1">
-                    <User size={16} className={
-                      isPrescription ? 'text-teal-500' : 'text-blue-500'
-                    } />
-                    <span className="font-medium">Doctor</span>
-                  </div>
-                  <p className="text-slate-800 font-semibold">Dr. {extractedData.doctor_name}</p>
-                </div>
-              )}
-
-              {/* Diagnostic Report Details */}
-              {!isPrescription && (
-                <>
-                  {/* Patient Name for Diagnostic */}
-                  {extractedData.patient_name && (
+            {/* Right Side - Details & Chat View Container */}
+            <div className="lg:w-2/5 p-0 flex flex-col relative overflow-hidden bg-slate-50/30">
+              
+              {viewMode === 'details' ? (
+                <div className="p-6 h-full flex flex-col animate-in slide-in-from-right-4 duration-300">
+                  {/* Doctor Name */}
+                  {extractedData.doctor_name && (
                     <div className="mb-5">
                       <div className="flex items-center gap-2 text-slate-600 mb-1">
-                        <User size={16} className="text-blue-500" />
-                        <span className="font-medium">Patient</span>
+                        <User size={16} className={isPrescription ? 'text-teal-500' : 'text-blue-500'} />
+                        <span className="font-medium">Doctor</span>
                       </div>
-                      <p className="text-slate-800 font-semibold">{extractedData.patient_name}</p>
+                      <p className="text-slate-800 font-semibold">Dr. {extractedData.doctor_name}</p>
                     </div>
                   )}
 
-                  {/* Critical Alerts */}
-                  {extractedData.critical_alerts && (
+                  {/* Diagnostic Report Details */}
+                  {!isPrescription && (
+                    <>
+                      {extractedData.patient_name && (
+                        <div className="mb-5">
+                          <div className="flex items-center gap-2 text-slate-600 mb-1">
+                            <User size={16} className="text-blue-500" />
+                            <span className="font-medium">Patient</span>
+                          </div>
+                          <p className="text-slate-800 font-semibold">{extractedData.patient_name}</p>
+                        </div>
+                      )}
+
+                      {extractedData.critical_alerts && (
+                        <div className="mb-5">
+                          <div className="flex items-center gap-2 text-slate-600 mb-2">
+                            <AlertTriangle size={16} className="text-red-500" />
+                            <span className="font-medium">Critical Alerts</span>
+                          </div>
+                          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                            {Array.isArray(extractedData.critical_alerts) ? (
+                              <div className="space-y-2">
+                                {extractedData.critical_alerts.map((alert, idx) => (
+                                  <div key={idx} className="flex items-start gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0"></div>
+                                    <span className="text-sm text-red-700">{alert}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-sm text-red-700">{extractedData.critical_alerts}</p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* AI Summary */}
+                  <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-5 mb-5 border border-indigo-100/50">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Sparkles size={16} className="text-indigo-500" />
+                      <h4 className="text-sm font-bold text-indigo-900">Clinical Summary</h4>
+                    </div>
+                    {loadingSummary ? (
+                      <div className="space-y-2 animate-pulse">
+                        <div className="h-3 bg-indigo-200/50 rounded-full w-full"></div>
+                        <div className="h-3 bg-indigo-200/50 rounded-full w-5/6"></div>
+                        <div className="h-3 bg-indigo-200/50 rounded-full w-4/6"></div>
+                      </div>
+                    ) : (
+                      <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                        {summary ? summary : "No summary available for this document."}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Notes */}
+                  {extractedData.notes && (
                     <div className="mb-5">
                       <div className="flex items-center gap-2 text-slate-600 mb-2">
-                        <AlertTriangle size={16} className="text-red-500" />
-                        <span className="font-medium">Critical Alerts</span>
+                        <FileText size={16} className={isPrescription ? 'text-teal-500' : 'text-blue-500'} />
+                        <span className="font-medium">Notes</span>
                       </div>
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                        {Array.isArray(extractedData.critical_alerts) ? (
-                          <div className="space-y-2">
-                            {extractedData.critical_alerts.map((alert, idx) => (
-                              <div key={idx} className="flex items-start gap-2">
-                                <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0"></div>
-                                <span className="text-sm text-red-700">{alert}</span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-sm text-red-700">{extractedData.critical_alerts}</p>
-                        )}
+                      <div className="bg-slate-50 rounded-lg p-3">
+                        <p className="text-sm text-slate-700">{extractedData.notes}</p>
                       </div>
                     </div>
                   )}
-                </>
+
+                  {/* Additional Information */}
+                  <div className="pt-4 border-t border-slate-100 flex-1">
+                    <h4 className="text-sm font-semibold text-slate-700 mb-3">Additional Details</h4>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                        <span className="text-slate-500 block text-xs mb-0.5">Uploaded At</span>
+                        <span className="font-medium text-slate-800 break-words">{formatDate(report.uploaded_at)}</span>
+                      </div>
+                      <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                        <span className="text-slate-500 block text-xs mb-0.5 whitespace-nowrap">Document Type</span>
+                        <span className="font-medium text-slate-800 capitalize">{report.document_type}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="mt-6 pt-4 border-t border-slate-200 flex flex-col gap-3">
+                    <div className="flex gap-3">
+                      <button
+                        onClick={onClose}
+                        className="flex-1 py-3 px-4 border border-slate-300 bg-white text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors shadow-sm"
+                      >
+                        Close
+                      </button>
+                      <button
+                        className="flex-1 py-3 px-4 bg-[#0E7B62] text-white rounded-lg font-medium hover:bg-[#0A5D48] transition-colors shadow-sm"
+                      >
+                        Download
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setViewMode('chat')}
+                      className="w-full py-3.5 px-4 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:scale-[0.99] group mt-1"
+                    >
+                      <MessageSquare size={18} className="text-[#00BFA5]" />
+                      Chat With Report
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="h-full flex flex-col bg-white animate-in slide-in-from-bottom-8 duration-300">
+                  {/* Chat Header */}
+                  <div className="p-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/50">
+                    <button 
+                      onClick={() => setViewMode('details')}
+                      className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-200"
+                    >
+                       <ChevronLeft size={20} className="stroke-[2.5]" />
+                    </button>
+                    <div>
+                       <h3 className="text-sm font-bold text-slate-800">Clinical AI Assistant</h3>
+                       <p className="text-[11px] text-slate-500 font-medium">Context: {report.file_name}</p>
+                    </div>
+                  </div>
+
+                  {/* Chat Messages */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/30">
+                    {chatMessages.length === 0 && (
+                      <div className="h-full flex flex-col items-center justify-center text-center opacity-60">
+                         <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-3">
+                            <Sparkles size={24} />
+                         </div>
+                         <p className="text-sm font-bold text-slate-700">Ask about this report</p>
+                         <p className="text-xs text-slate-500 max-w-[200px] mt-1">E.g., "What are my hemoglobin levels?" or "Are there critical alerts?"</p>
+                      </div>
+                    )}
+                    {chatMessages.map((msg, idx) => (
+                      <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2`}>
+                        <div className={`flex gap-2 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                          <div className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center mt-1 shadow-sm ${msg.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-[#00BFA5] text-white'}`}>
+                            {msg.role === 'user' ? <User size={14} /> : <Bot size={14} />}
+                          </div>
+                          <div className={`px-4 py-2.5 rounded-2xl text-[14px] shadow-sm leading-relaxed ${
+                            msg.role === 'user' 
+                              ? 'bg-indigo-600 text-white rounded-tr-[4px]' 
+                              : 'bg-white border border-slate-200 text-slate-700 rounded-tl-[4px]'
+                          }`}>
+                            {msg.role === 'ai' ? (
+                              <ReactMarkdown
+                                components={{
+                                  strong: ({node, ...props}) => <span className="font-bold text-slate-900" {...props} />,
+                                  ul: ({node, ...props}) => <ul className="list-disc pl-4 my-1 space-y-1" {...props} />,
+                                  ol: ({node, ...props}) => <ol className="list-decimal pl-4 my-1 space-y-1" {...props} />,
+                                  li: ({node, ...props}) => <li className="pl-1 text-slate-700" {...props} />,
+                                  p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />
+                                }}
+                              >
+                                {msg.content}
+                              </ReactMarkdown>
+                            ) : (
+                              msg.content
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {isSending && (
+                      <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2">
+                        <div className="flex gap-2">
+                          <div className="w-7 h-7 shrink-0 rounded-full bg-[#00BFA5] text-white flex items-center justify-center mt-1 shadow-sm">
+                            <Bot size={14} />
+                          </div>
+                          <div className="px-5 py-3 rounded-2xl rounded-tl-[4px] bg-white border border-slate-200 text-slate-400 flex items-center gap-1.5 shadow-sm">
+                            <div className="w-1.5 h-1.5 bg-[#00BFA5] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="w-1.5 h-1.5 bg-[#00BFA5] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="w-1.5 h-1.5 bg-[#00BFA5] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+
+                  {/* Chat Input */}
+                  <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-slate-100 flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Type your question..."
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      disabled={isSending}
+                      className="flex-1 bg-slate-50 border border-slate-200 text-sm rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium placeholder:text-slate-400"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!chatInput.trim() || isSending}
+                      className="bg-slate-900 text-white p-3 rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:hover:bg-slate-900 transition-colors shadow-sm flex items-center justify-center"
+                    >
+                      {isSending ? <Loader size={18} className="animate-spin" /> : <Send size={18} />}
+                    </button>
+                  </form>
+                </div>
               )}
-
-              {/* AI Summary - Available for all document types */}
-              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-5 mb-5 border border-indigo-100/50">
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkles size={16} className="text-indigo-500" />
-                  <h4 className="text-sm font-bold text-indigo-900">Clinical Summary</h4>
-                </div>
-                {loadingSummary ? (
-                  <div className="space-y-2 animate-pulse">
-                    <div className="h-3 bg-indigo-200/50 rounded-full w-full"></div>
-                    <div className="h-3 bg-indigo-200/50 rounded-full w-5/6"></div>
-                    <div className="h-3 bg-indigo-200/50 rounded-full w-4/6"></div>
-                  </div>
-                ) : (
-                  <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
-                    {summary ? summary : "No summary available for this document."}
-                  </div>
-                )}
-              </div>
-
-              {/* Notes/Observations */}
-              {extractedData.notes && (
-                <div className="mb-5">
-                  <div className="flex items-center gap-2 text-slate-600 mb-2">
-                    <FileText size={16} className={
-                      isPrescription ? 'text-teal-500' : 'text-blue-500'
-                    } />
-                    <span className="font-medium">Notes</span>
-                  </div>
-                  <div className="bg-slate-50 rounded-lg p-3">
-                    <p className="text-sm text-slate-700">{extractedData.notes}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Additional Information */}
-              <div className="pt-4 border-t border-slate-100">
-                <h4 className="text-sm font-semibold text-slate-700 mb-3">Additional Details</h4>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="bg-slate-50 rounded-lg p-3">
-                    <span className="text-slate-500 block text-xs mb-0.5">Uploaded At</span>
-                    <span className="font-medium text-slate-800 break-words">{formatDate(report.uploaded_at)}</span>
-                  </div>
-                  <div className="bg-slate-50 rounded-lg p-3">
-                    <span className="text-slate-500 block text-xs mb-0.5 whitespace-nowrap">Document Type</span>
-                    <span className="font-medium text-slate-800 capitalize">{report.document_type}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col gap-3">
-                <div className="flex gap-3">
-                  <button
-                    onClick={onClose}
-                    className="flex-1 py-3 px-4 border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors"
-                  >
-                    Close
-                  </button>
-                  <button
-                    className="flex-1 py-3 px-4 bg-[#0E7B62] text-white rounded-lg font-medium hover:bg-[#0A5D48] transition-colors shadow-sm"
-                  >
-                    Download Document
-                  </button>
-                </div>
-                <button
-                  className="w-full py-3.5 px-4 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:scale-[0.99] group"
-                >
-                  <Mic size={18} className="group-hover:animate-pulse" />
-                  Talk With Report
-                </button>
-              </div>
             </div>
           </div>
         </div>
