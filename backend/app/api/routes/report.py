@@ -78,7 +78,7 @@ def active_medications(session: Session = Depends(get_session)):
         "active_medications": len(medications)
     }
 
-@router.get("/reports", response_model=List[dict])
+@router.get("", response_model=List[dict])
 async def get_reports(
     session: Session = Depends(get_session),
     skip: int = 0,

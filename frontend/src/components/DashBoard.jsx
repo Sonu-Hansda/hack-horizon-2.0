@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   PillBottle, Calendar, FileText, CloudUpload, QrCode, 
   TestTube, Stethoscope, ClipboardPlus, Activity
@@ -11,12 +11,63 @@ import {
   QuickAccessCard, 
   SupportAssistanceCard 
 } from './dashboard/SidebarWidgets';
+import { medicalAPI } from '../api';
 
 export default function DashBoard() {
+  const [stats, setStats] = useState({
+    activeMedications: 0,
+    recentVisits: 0,
+    totalReports: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const [totalData, recentData, medData] = await Promise.all([
+          medicalAPI.getTotalReports(),
+          medicalAPI.getRecentReports(),
+          medicalAPI.getActiveMedications()
+        ]);
+
+        setStats({
+          totalReports: totalData.total_reports || 0,
+          recentVisits: recentData.recent_reports || 0, // Fallback to recent reports count if visits aren't tracked yet
+          activeMedications: medData.active_medications || 0
+        });
+      } catch (err) {
+        console.error('Error fetching dashboard stats:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   const statsData = [
-    { icon: PillBottle, value: "04", label: "Active Medications", badge: "ACTIVE", badgeColor: "text-[#0E7B62]" },
-    { icon: Calendar, value: "12", label: "Recent Visits (30d)", badge: "RECENT", badgeColor: "text-slate-400" },
-    { icon: FileText, value: "87", label: "Reports Uploaded", badge: "TOTAL", badgeColor: "text-slate-400" }
+    { 
+      icon: PillBottle, 
+      value: stats.activeMedications.toString().padStart(2, '0'), 
+      label: "Active Medications", 
+      badge: "ACTIVE", 
+      badgeColor: "text-[#0E7B62]" 
+    },
+    { 
+      icon: Calendar, 
+      value: stats.recentVisits.toString().padStart(2, '0'), 
+      label: "Recent Activity (30d)", 
+      badge: "RECENT", 
+      badgeColor: "text-slate-400" 
+    },
+    { 
+      icon: FileText, 
+      value: stats.totalReports.toString().padStart(2, '0'), 
+      label: "Reports Uploaded", 
+      badge: "TOTAL", 
+      badgeColor: "text-slate-400" 
+    }
   ];
 
   const bannerData = [
@@ -25,14 +76,16 @@ export default function DashBoard() {
       description: "Securely add lab results, imaging, or clinician notes for better tracking.",
       action: "Start Uploading",
       bg: "bg-slate-900",
-      icon: CloudUpload
+      icon: CloudUpload,
+      link: "/medical-records"
     },
     { 
       title: "Generate Access QR",
       description: "Create a secure token for medical professionals to view your health records.",
       action: "Create Token",
       bg: "bg-[#0E7B62]",
-      icon: QrCode
+      icon: QrCode,
+      link: "/share-qr"
     }
   ];
 
@@ -41,34 +94,15 @@ export default function DashBoard() {
       icon: TestTube,
       iconBg: "bg-teal-50",
       iconColor: "text-[#0E7B62]",
-      title: "Blood Panel Results Uploaded",
-      time: "2 hours ago",
-      description: "Comprehensive Metabolic Panel (CMP) results from City Central Lab added to Medical Records.",
-      tags: ['LABS', 'PDF']
-    },
-    {
-      icon: Stethoscope,
-      iconBg: "bg-slate-100",
-      iconColor: "text-slate-600",
-      title: "Cardiology Follow-up Visit",
-      time: "Yesterday",
-      description: "Routine consultation with Dr. Amelia Zhang. Vitals stable. Follow-up notes available for review.",
-      tags: ['VISIT']
-    },
-    {
-      icon: ClipboardPlus,
-      iconBg: "bg-orange-50",
-      iconColor: "text-orange-600",
-      title: "Prescription Renewal",
-      time: "Jan 12, 2024",
-      description: "Lisinopril 10mg renewed for 90 days. Next refill eligible on April 15.",
-      tags: ['PHARMACY']
+      title: "Welcome to MediSync",
+      time: "Just now",
+      description: "Your secure digital health record platform is ready. Start by uploading your first medical report.",
+      tags: ['SYSTEM']
     }
   ];
 
   const quickAccessItems = [
-    { title: "Vaccination Record 2024", time: "Updated 2d ago", icon: FileText },
-    { title: "Recent EKG Results", time: "Updated 2w ago", icon: Activity }
+    { title: "Current Health Profile", time: "View Details", icon: Activity }
   ];
 
   return (
@@ -84,7 +118,7 @@ export default function DashBoard() {
         <ActivityFeed activities={activities} />
 
         <div className="space-y-8">
-          <RecordCompletionCard percentage={85} />
+          <RecordCompletionCard percentage={stats.totalReports > 0 ? 100 : 20} />
           <QuickAccessCard items={quickAccessItems} />
           <SupportAssistanceCard />
         </div>
@@ -93,9 +127,9 @@ export default function DashBoard() {
       {/* Simple Footer */}
       <footer className="flex flex-col md:flex-row justify-between items-center py-10 mt-6 border-t border-slate-200/60 gap-6">
         <div className="flex items-center gap-4 flex-wrap justify-center font-bold">
-          <span className="text-slate-900 text-[15px]">Medi Sync</span>
+          <span className="text-slate-900 text-[15px]">MediSync</span>
           <span className="text-slate-300">|</span>
-          <span className="text-slate-400 text-[13px]">&copy; 2024 Medi Sync. HIPAA Compliant.</span>
+          <span className="text-slate-400 text-[13px]">&copy; 2024 MediSync. HIPAA Compliant.</span>
         </div>
         <div className="flex items-center gap-6 lg:gap-8 flex-wrap justify-center text-[13px] font-bold">
           <a href="#" className="text-slate-500 hover:text-[#0E7B62] transition-colors">Privacy</a>

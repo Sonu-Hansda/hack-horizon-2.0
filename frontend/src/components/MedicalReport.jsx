@@ -22,6 +22,10 @@ export default function MedicalReport() {
     setShowUploadModal(false);
   };
 
+  // Helper to get backend base URL
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+  const backendBaseUrl = apiBaseUrl.replace('/api', '');
+
   const handleUploadSuccess = (result) => {
     fetchReports();
   };
@@ -157,7 +161,7 @@ export default function MedicalReport() {
                     // Actual image with overlay
                     <>
                       <img 
-                        src={`http://localhost:8000${report.file_url}`}
+                        src={`${backendBaseUrl}${report.file_url}`}
                         alt={report.file_name || "Medical document"}
                         className="w-full h-full object-cover"
                         onError={(e) => {

@@ -36,6 +36,33 @@ export const medicalAPI = {
       throw error.response?.data || { detail: 'Failed to fetch medical record' };
     }
   },
+
+  getTotalReports: async () => {
+    try {
+      const response = await api.get('/reports/total-reports');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { detail: 'Failed to fetch total reports' };
+    }
+  },
+
+  getRecentReports: async () => {
+    try {
+      const response = await api.get('/reports/recent-reports');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { detail: 'Failed to fetch recent reports' };
+    }
+  },
+
+  getActiveMedications: async () => {
+    try {
+      const response = await api.get('/reports/active-medications');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { detail: 'Failed to fetch active medications' };
+    }
+  },
 };
 
 export default medicalAPI;
