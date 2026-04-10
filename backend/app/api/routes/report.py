@@ -1,17 +1,69 @@
-from fastapi import APIRouter, UploadFile, File, Form, Depends
+from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 import shutil, os
-from typing import Optional
+from typing import Optional, List
+from sqlmodel import Session, select
 
-from sqlmodel import Session
 from app.db.session import get_session
 from app.db.models import Report
-
 from app.services.report_pipeline import process_report
 
 router = APIRouter()
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+@router.get("/reports", response_model=List[dict])
+async def get_reports(
+    session: Session = Depends(get_session),
+    skip: int = 0,
+    limit: int = 100
+):
+    try:
+        statement = select(Report).offset(skip).limit(limit)
+        results = session.exec(statement).all()
+        
+        reports = []
+        for report in results:
+            reports.append({
+                "id": report.id,
+                "visit_id": report.visit_id,
+                "file_name": report.file_name,
+                "file_type": report.file_type,
+                "file_url": report.file_url,
+                "document_type": report.document_type,
+                "extracted_data": report.extracted_data,
+                "uploaded_at": report.uploaded_at.isoformat() if report.uploaded_at else None
+            })
+        
+        return reports
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching reports: {str(e)}")
+
+@router.get("/reports/{report_id}", response_model=dict)
+async def get_report(
+    report_id: int,
+    session: Session = Depends(get_session)
+):
+    """Get a specific report by ID"""
+    try:
+        report = session.get(Report, report_id)
+        if not report:
+            raise HTTPException(status_code=404, detail="Report not found")
+        
+        return {
+            "id": report.id,
+            "visit_id": report.visit_id,
+            "file_name": report.file_name,
+            "file_type": report.file_type,
+            "file_url": report.file_url,
+            "document_type": report.document_type,
+            "extracted_data": report.extracted_data,
+            "uploaded_at": report.uploaded_at.isoformat() if report.uploaded_at else None
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching report: {str(e)}")
 
 @router.post("/process-report")
 async def process_report_api(
