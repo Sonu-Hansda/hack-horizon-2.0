@@ -145,7 +145,8 @@ async def upload_report_to_visit(
         visit_id=visit_id,
         file_url=f"/uploads/{unique_filename}",
         file_name=file.filename,
-        file_type=file.content_type
+        file_type=file.content_type,
+        document_type="uploaded"  # Default document type for visit uploads
     )
     
     session.add(report)

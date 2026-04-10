@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import auth, patient, visit, doctor, qr
+from app.api.routes import auth, patient, visit, doctor, qr, report
 from app.db.session import create_db_and_tables
 from app.core.config import settings
 import os
@@ -20,6 +20,7 @@ app.include_router(patient.router)
 app.include_router(visit.router)
 app.include_router(doctor.router)
 app.include_router(qr.router)
+app.include_router(report.router)
 
 @app.on_event("startup")
 def on_startup():

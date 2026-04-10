@@ -71,8 +71,10 @@ class ReportCreate(ReportBase):
 
 class ReportInDB(ReportBase):
     id: int
-    visit_id: int
-    file_url: str
+    visit_id: Optional[int] = None
+    file_url: Optional[str] = None
+    document_type: Optional[str] = None
+    extracted_data: Optional[dict] = None
     uploaded_at: datetime
     
     class Config:

@@ -58,14 +58,15 @@ class Medication(SQLModel, table=True):
 
 class Report(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-
+    visit_id: Optional[int] = Field(default=None, foreign_key="visit.id")
     file_name: str
     file_type: str
-
+    file_url: Optional[str] = None
     document_type: str  # diagnostic / prescription
     extracted_data: Optional[dict] = Field(default=None, sa_column=Column(JSON))
-
     uploaded_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    visit: Optional["Visit"] = Relationship(back_populates="reports")
       
 class QRToken(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
