@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ConfirmationModal from './ui/ConfirmationModal';
 import {
-   LayoutDashboard, FolderOpen, Activity,
+  LayoutDashboard, FolderOpen, Activity,
   QrCode, Settings, Plus, Bell, Menu, X, Search,
   LogOut
 } from 'lucide-react';
@@ -26,19 +26,19 @@ export default function Layout({ children }) {
       setActiveTab('Reports');
     } else if (path === '/history') {
       setActiveTab('History');
-    }else if(path==='/share'){
-        setActiveTab('Share QR')
+    } else if (path === '/share') {
+      setActiveTab('Share QR')
     }
-    else if(path==='/settings'){
-        setActiveTab('Settings')
+    else if (path === '/settings') {
+      setActiveTab('Settings')
     }
   }, [location]);
 
   const handleNavigation = (tab) => {
     setActiveTab(tab);
     setIsSidebarOpen(false);
-    
-    switch(tab) {
+
+    switch (tab) {
       case 'Dashboard':
         navigate('/dashboard');
         break;
@@ -78,26 +78,33 @@ export default function Layout({ children }) {
     setShowLogoutModal(false);
   };
 
-  // Get user display name
+  // Get user display name (First Name for greetings)
   const getUserDisplayName = () => {
-    if (!user) return 'Welcome';
-    
+    if (!user) return 'User';
+
     if (user.full_name) {
       return user.full_name.split(' ')[0];
     }
-    
+
     if (user.email) {
-      return user.email.split('@')[0];
+      const nameFromEmail = user.email.split('@')[0];
+      return nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1);
     }
-    
+
     return 'User';
+  };
+
+  // Get full name for profile sections
+  const getFullDisplayName = () => {
+    if (!user) return 'User';
+    return user.full_name || user.email?.split('@')[0] || 'User';
   };
 
   return (
     <div className="flex h-screen bg-[#F4F7FB] font-sans text-slate-800 overflow-hidden">
-      
+
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
@@ -118,7 +125,7 @@ export default function Layout({ children }) {
             </div>
             {/* Close button for mobile */}
             <button className="lg:hidden text-slate-400 hover:text-slate-700 bg-slate-100 p-1.5 rounded-lg" onClick={() => setIsSidebarOpen(false)}>
-               <X size={20} strokeWidth={2.5} />
+              <X size={20} strokeWidth={2.5} />
             </button>
           </div>
 
@@ -133,7 +140,7 @@ export default function Layout({ children }) {
 
           <div className="p-4 border-t border-slate-100 bg-white sticky bottom-0 space-y-4">
 
-            <button 
+            <button
               onClick={handleLogoutClick}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-[12px] text-[13px] font-bold text-slate-600 hover:text-red-600 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
             >
@@ -142,7 +149,7 @@ export default function Layout({ children }) {
             </button>
 
             {/* New Record Button */}
-            <button className="w-full bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-2 py-3.5 rounded-[14px] text-sm font-bold transition-all shadow-md hover:shadow-lg active:scale-[0.98]">
+            <button className="w-full bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-2 py-3.5 rounded-[14px] text-sm font-bold transition-all shadow-md hover:shadow-lg active:scale-[0.98]" onClick={() => navigate("/medical-records")}>
               <Plus size={18} strokeWidth={2.5} />
               New Record
             </button>
@@ -172,7 +179,7 @@ export default function Layout({ children }) {
               </div>
             )}
           </div>
-          
+
           <div className="flex items-center gap-4 lg:gap-6 ml-4">
             <button className="relative text-slate-500 hover:text-slate-700 transition-colors hidden sm:block">
               <Bell size={22} strokeWidth={2} />
@@ -190,7 +197,7 @@ export default function Layout({ children }) {
               </div>
               <div className="hidden md:block">
                 <p className="text-[14px] font-bold text-slate-800 leading-tight">
-                  {getUserDisplayName()}
+                  {getFullDisplayName()}
                 </p>
                 <p className="text-[12px] text-slate-500 font-medium mt-0.5">
                   {user?.email ? 'Patient' : 'Guest'}
@@ -202,7 +209,7 @@ export default function Layout({ children }) {
 
         {/* Scrollable Content Wrapper */}
         <div className="flex-1 overflow-y-auto px-4 lg:px-10 pb-8 custom-scrollbar">
-            {children}
+          {children}
         </div>
       </main>
 
