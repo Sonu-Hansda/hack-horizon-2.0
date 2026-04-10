@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field, Relationship, Column, JSON
 from typing import Optional, List
 from datetime import datetime
 from uuid import UUID, uuid4
@@ -58,14 +58,15 @@ class Medication(SQLModel, table=True):
 
 class Report(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    visit_id: int = Field(foreign_key="visit.id")
-    file_url: str
+
     file_name: str
     file_type: str
-    uploaded_at: datetime = Field(default_factory=datetime.utcnow)
-    
-    visit: Visit = Relationship(back_populates="reports")
 
+    document_type: str  # diagnostic / prescription
+    extracted_data: Optional[dict] = Field(default=None, sa_column=Column(JSON))
+
+    uploaded_at: datetime = Field(default_factory=datetime.utcnow)
+      
 class QRToken(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     token: str = Field(unique=True, index=True)
