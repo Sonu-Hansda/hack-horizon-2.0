@@ -93,6 +93,15 @@ export const medicalAPI = {
       throw error.response?.data || { detail: 'Failed to fetch dashboard summary' };
     }
   },
+
+  getReportSummary: async (reportId) => {
+    try {
+      const response = await api.get(`/reports/summary/${reportId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { detail: 'Failed to fetch report summary' };
+    }
+  },
 };
 
 export default medicalAPI;
