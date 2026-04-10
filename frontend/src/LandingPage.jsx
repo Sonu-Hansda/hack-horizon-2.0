@@ -551,12 +551,12 @@ function Navbar({ onEnterApp }) {
       <div className="flex items-center gap-4">
         <div className="hidden sm:flex items-center gap-3">
           {/* Sign In */}
-          <button
+          <Link to='/login'
             onClick={onEnterApp}
             className="px-5 py-2.5 rounded-full border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-100 hover:border-slate-400 transition-all duration-200 active:scale-95"
           >
             Sign In
-          </button>
+          </Link>
 
           {/* Sign Up */}
           <button
