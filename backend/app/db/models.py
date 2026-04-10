@@ -10,6 +10,24 @@ class User(SQLModel, table=True):
     full_name: str
     phone: Optional[str] = None
     date_of_birth: Optional[datetime] = None
+    
+    # Health Profile Fields
+    age: Optional[int] = None
+    sex: Optional[str] = None
+    blood_group: Optional[str] = None
+    height: Optional[float] = None
+    weight: Optional[float] = None
+    hr: Optional[int] = None
+    bp: Optional[str] = None
+    resp_rate: Optional[int] = None
+    spo2: Optional[int] = None
+    steps_goal: Optional[int] = None
+    sleep_goal: Optional[float] = None
+    activity_level: Optional[str] = None
+    water_intake_goal: Optional[float] = None
+    primary_concerns: Optional[str] = None
+    family_history: Optional[str] = None
+    
     created_at: datetime = Field(default_factory=datetime.utcnow)
     
     visits: List["Visit"] = Relationship(back_populates="patient")
