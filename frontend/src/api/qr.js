@@ -17,6 +17,15 @@ export const qrAPI = {
     } catch (error) {
       throw error.response?.data || { detail: 'Failed to fetch shared record' };
     }
+  },
+
+  createPublicVisit: async (token, data) => {
+    try {
+      const response = await api.post(`/qr/shared/${token}/visit`, data);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { detail: 'Failed to create clinical encounter' };
+    }
   }
 };
 

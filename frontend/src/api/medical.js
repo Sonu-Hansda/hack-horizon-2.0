@@ -2,11 +2,14 @@ import api from './axios';
 
 export const medicalAPI = {
 
-  uploadMedicalRecord: async (file, documentType) => {
+  uploadMedicalRecord: async (file, documentType, visitId = null) => {
     try {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('document_type', documentType);
+      if (visitId) {
+        formData.append('visit_id', visitId);
+      }
 
       const response = await api.post('/reports/process-report', formData, {
         headers: {
@@ -61,6 +64,24 @@ export const medicalAPI = {
       return response.data;
     } catch (error) {
       throw error.response?.data || { detail: 'Failed to fetch active medications' };
+    }
+  },
+
+  getVisits: async () => {
+    try {
+      const response = await api.get('/visits');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { detail: 'Failed to fetch visits' };
+    }
+  },
+
+  linkReportToVisit: async (reportId, visitId) => {
+    try {
+      const response = await api.post(`/reports/${reportId}/link/${visitId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { detail: 'Failed to link report to visit' };
     }
   },
 };
