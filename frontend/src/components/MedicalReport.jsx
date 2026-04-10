@@ -6,6 +6,7 @@ import {
 import { medicalAPI } from '../api';
 import UploadMedicalRecordModal from './ui/UploadMedicalRecordModal';
 import RecordDetailModal from './ui/RecordDetailModal';
+import axios from 'axios';
 
 export default function MedicalReport() {
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -22,9 +23,19 @@ export default function MedicalReport() {
     setShowUploadModal(false);
   };
 
+  const[summary,setSummary]=useState("");
+
+  
+
   // Helper to get backend base URL
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
   const backendBaseUrl = apiBaseUrl.replace('/api', '');
+
+  const fecthSummary=async(report_id)=>{
+    const res=await axios.get(`${backendBaseUrl}/reports/summary/${report_id}`)
+    console.log(res.data.answer);
+    setSummary(res.data.answer);
+  }
 
   const handleUploadSuccess = (result) => {
     fetchReports();
@@ -56,6 +67,7 @@ export default function MedicalReport() {
   // Fetch reports on component mount
   useEffect(() => {
     fetchReports();
+    fecthSummary(1); // Fetch summary for the first report as an example
   }, []);
 
   const formatDate = (dateString) => {
@@ -97,6 +109,7 @@ export default function MedicalReport() {
              </div>
            </div>
         </div>
+
         <div className="flex items-center gap-3 shrink-0">
            <button className="flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-[12px] font-bold text-[14px] hover:bg-slate-50 transition-colors shadow-sm active:scale-95">
              <Filter size={16} strokeWidth={2.5} />

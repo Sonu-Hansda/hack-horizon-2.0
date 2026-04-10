@@ -47,3 +47,56 @@ def chat_with_report(report_type: str, report_data: dict, question: str):
     response = model.generate_content(prompt)
 
     return response.text.strip()
+
+def summarize_report(report_type: str, report_data: dict):
+
+    if report_type == "diagnostic":
+        context = build_context_report(report_data)
+
+        prompt = f"""
+You are a helpful medical assistant.
+
+Summarize the following diagnostic report in simple, easy-to-understand language for a normal person.
+
+Report Data:
+{context}
+
+Instructions:
+- Keep it short (3–5 lines max)
+- Highlight important findings (especially abnormal values)
+- Explain what the results generally indicate in simple terms
+- Avoid medical jargon or explain it briefly if used
+- If everything is normal, clearly mention that
+
+Write the summary as a small paragraph.
+"""
+
+    elif report_type == "prescription":
+        context = build_context_prescription(report_data)
+
+        prompt = f"""
+You are a helpful medical assistant.
+
+Summarize the following prescription in a clear and simple way for a patient.
+
+Prescription Data:
+{context}
+
+Instructions:
+- Keep it short (3–5 lines max)
+- Clearly mention:
+  - What medicines are prescribed and their purpose (if obvious)
+  - Any important instructions
+  - Any tests recommended
+- Use a conversational and easy tone
+- Avoid complex medical terms
+
+Write the summary as a small paragraph.
+"""
+
+    else:
+        raise ValueError("Invalid report type")
+
+    response = model.generate_content(prompt)
+
+    return response.text.strip()
