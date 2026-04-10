@@ -10,6 +10,7 @@ import DashboardPage from '../pages/DashboardPage';
 import MedicalReportPage from '../pages/MedicalReportPage';
 import HistoryPage from '../pages/HistoryPage';
 import MedicalRecordsPage from '../pages/MedicalRecordsPage';
+import ShareQRPage from '../pages/ShareQRPage';
 
 const AppRoutes = () => {
   return (
@@ -54,6 +55,15 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
+          <Route 
+            path="/share"
+            element={
+              <ProtectedRoute>
+                <ShareQRPage />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Default redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

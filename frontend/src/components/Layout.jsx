@@ -26,6 +26,8 @@ export default function Layout({ children }) {
       setActiveTab('Reports');
     } else if (path === '/history') {
       setActiveTab('History');
+    }else if(path==='/share'){
+        setActiveTab('Share QR')
     }
   }, [location]);
 
@@ -50,7 +52,7 @@ export default function Layout({ children }) {
         navigate('/dashboard');
         break;
       case 'Share QR':
-        navigate('/dashboard');
+        navigate('/share');
         break;
       case 'Settings':
         navigate('/dashboard');
@@ -120,9 +122,9 @@ export default function Layout({ children }) {
           {/* Navigation */}
           <nav className="flex-1 px-4 space-y-1.5 mt-2">
             <SidebarItem icon={LayoutDashboard} label="Dashboard" active={activeTab === 'Dashboard'} onClick={() => handleNavigation('Dashboard')} />
-            <SidebarItem icon={FolderOpen} label="Medical Records" active={activeTab === 'Medical Records'} onClick={() => handleNavigation('Medical Records')} />
-            <SidebarItem icon={Pill} label="Medications" active={activeTab === 'Medications'} onClick={() => handleNavigation('Medications')} />
-            <SidebarItem icon={BarChart2} label="Reports" active={activeTab === 'Reports'} onClick={() => handleNavigation('Reports')} />
+            <SidebarItem icon={FolderOpen} label="Records" active={activeTab === 'Medical Records'} onClick={() => handleNavigation('Medical Records')} />
+            {/* <SidebarItem icon={Pill} label="Medications" active={activeTab === 'Medications'} onClick={() => handleNavigation('Medications')} />
+            <SidebarItem icon={BarChart2} label="Reports" active={activeTab === 'Reports'} onClick={() => handleNavigation('Reports')} /> */}
             <SidebarItem icon={Activity} label="History" active={activeTab === 'History'} onClick={() => handleNavigation('History')} />
             <SidebarItem icon={QrCode} label="Share QR" active={activeTab === 'Share QR'} onClick={() => handleNavigation('Share QR')} />
           </nav>
