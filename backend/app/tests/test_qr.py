@@ -1,7 +1,13 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import SQLModel, create_engine, Session
+from sqlmodel import SQLModel, create_engine, Session, select
 from sqlmodel.pool import StaticPool
+import sys
+import os
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from app.main import app
 from app.db.session import get_session
 from app.db.models import User, QRToken
@@ -83,7 +89,7 @@ def test_validate_nonexistent_qr_token(client: TestClient):
     assert "not found" in response.json()["detail"]
 
 def test_validate_expired_qr_token(client: TestClient, session: Session):
-    user = session.exec(SQLModel.select(User).where(User.email == "test@example.com")).first()
+    user = session.exec(select(User).where(User.email == "test@example.com")).first()
     
     expired_token = QRToken(
         token="expired-token",
@@ -100,7 +106,7 @@ def test_validate_expired_qr_token(client: TestClient, session: Session):
     assert "expired" in response.json()["detail"]
 
 def test_validate_used_qr_token(client: TestClient, session: Session):
-    user = session.exec(SQLModel.select(User).where(User.email == "test@example.com")).first()
+    user = session.exec(select(User).where(User.email == "test@example.com")).first()
     
     used_token = QRToken(
         token="used-token",
@@ -150,6 +156,6 @@ def test_doctor_create_visit_with_qr(client: TestClient, session: Session):
     assert data["notes"] == "Test notes"
     
     qr_token_obj = session.exec(
-        SQLModel.select(QRToken).where(QRToken.token == qr_token)
+        select(QRToken).where(QRToken.token == qr_token)
     ).first()
     assert qr_token_obj.used_at is not None
