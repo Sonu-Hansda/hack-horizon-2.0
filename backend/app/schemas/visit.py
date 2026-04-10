@@ -7,6 +7,11 @@ from .doctor import DoctorInDB
 class VisitBase(BaseModel):
     diagnosis: Optional[str] = None
     notes: Optional[str] = None
+    doctor_name: Optional[str] = None
+    hospital_name: Optional[str] = None
+    examine_area: Optional[str] = None
+    location: Optional[str] = None
+    date: Optional[datetime] = None
 
 class VisitCreate(VisitBase):
     pass
@@ -14,6 +19,10 @@ class VisitCreate(VisitBase):
 class VisitUpdate(BaseModel):
     diagnosis: Optional[str] = None
     notes: Optional[str] = None
+    doctor_name: Optional[str] = None
+    hospital_name: Optional[str] = None
+    examine_area: Optional[str] = None
+    location: Optional[str] = None
 
 class VisitInDB(VisitBase):
     id: int

@@ -5,10 +5,45 @@ from datetime import datetime, timedelta
 from app.api.deps import get_current_user
 from app.db.session import get_session
 from app.db.models import User, QRToken, Visit, Report
-from app.schemas.qr import QRTokenCreate, QRTokenInDB, QRTokenValidate, SharedDataResponse
+from app.schemas.qr import QRTokenCreate, QRTokenInDB, QRTokenValidate, SharedDataResponse, SharedVisit, SharedReport
+from app.schemas.visit import VisitCreate, VisitInDB
 from app.core.config import settings
 
 router = APIRouter(prefix="/qr", tags=["qr"])
+
+@router.post("/shared/{token}/visit", response_model=VisitInDB, status_code=status.HTTP_201_CREATED)
+def create_visit_from_shared_token(
+    token: str,
+    visit_data: VisitCreate,
+    session: Session = Depends(get_session)
+):
+    """
+    Public endpoint for healthcare providers to register a clinical encounter 
+    when viewing a patient's shared record.
+    """
+    qr_token = session.exec(select(QRToken).where(QRToken.token == token)).first()
+    if not qr_token:
+        raise HTTPException(status_code=404, detail="Shared record not found")
+        
+    if qr_token.expires_at < datetime.utcnow():
+        raise HTTPException(status_code=410, detail="Shared record has expired")
+        
+    # Create the visit linked to the patient
+    visit = Visit(
+        patient_id=qr_token.patient_id,
+        doctor_name=visit_data.doctor_name,
+        hospital_name=visit_data.hospital_name,
+        examine_area=visit_data.examine_area,
+        location=visit_data.location,
+        date=visit_data.date or datetime.utcnow(),
+        diagnosis=visit_data.diagnosis,
+        notes=visit_data.notes
+    )
+    
+    session.add(visit)
+    session.commit()
+    session.refresh(visit)
+    return visit
 
 @router.post("/generate", response_model=QRTokenInDB, status_code=status.HTTP_201_CREATED)
 def generate_qr_token(
@@ -99,9 +134,11 @@ def get_shared_record(
             
             # If the user selected specific reports, we only show the visit if it has at least one of those reports
             if not selected_ids or v_reports:
-                visit_copy = visit.model_copy()
-                visit_copy.reports = v_reports
-                filtered_visits.append(visit_copy)
+                # Use model_validate to convert SQLModel to Pydantic schema
+                visit_schema = SharedVisit.model_validate(visit)
+                # Override with filtered reports
+                visit_schema.reports = [SharedReport.model_validate(r) for r in v_reports]
+                filtered_visits.append(visit_schema)
         
         response_data["visits"] = filtered_visits
 
@@ -113,7 +150,7 @@ def get_shared_record(
             .order_by(Report.uploaded_at.desc())
         ).all()
         
-        filtered_unlinked = [r for r in unlinked_reports if not selected_ids or r.id in selected_ids]
+        filtered_unlinked = [SharedReport.model_validate(r) for r in unlinked_reports if not selected_ids or r.id in selected_ids]
         response_data["unlinked_reports"] = filtered_unlinked
         
     return response_data

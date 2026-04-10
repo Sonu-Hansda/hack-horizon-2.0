@@ -43,6 +43,10 @@ class Visit(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     patient_id: int = Field(foreign_key="user.id")
     doctor_id: Optional[int] = Field(foreign_key="doctor.id", default=None)
+    doctor_name: Optional[str] = None
+    hospital_name: Optional[str] = None
+    examine_area: Optional[str] = None  # e.g., ENT, Cardiology
+    location: Optional[str] = None
     date: datetime = Field(default_factory=datetime.utcnow)
     diagnosis: Optional[str] = None
     notes: Optional[str] = None

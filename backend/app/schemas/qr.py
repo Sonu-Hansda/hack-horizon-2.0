@@ -46,12 +46,18 @@ class SharedHealthProfile(BaseModel):
     primary_concerns: Optional[str] = None
     family_history: Optional[str] = None
 
+    class Config:
+        from_attributes = True
+
 class SharedMedication(BaseModel):
     id: Optional[int] = None
     medicine_name: str
     dosage: str
     frequency: str
     instructions: Optional[str] = None
+
+    class Config:
+        from_attributes = True
 
 class SharedReport(BaseModel):
     id: Optional[int] = None
@@ -62,13 +68,23 @@ class SharedReport(BaseModel):
     uploaded_at: datetime
     extracted_data: Optional[dict] = None
 
+    class Config:
+        from_attributes = True
+
 class SharedVisit(BaseModel):
     id: Optional[int] = None
+    doctor_name: Optional[str] = None
+    hospital_name: Optional[str] = None
+    examine_area: Optional[str] = None
+    location: Optional[str] = None
     date: datetime
     diagnosis: Optional[str] = None
     notes: Optional[str] = None
     prescriptions: List[SharedMedication] = []
     reports: List[SharedReport] = []
+
+    class Config:
+        from_attributes = True
 
 class SharedDataResponse(BaseModel):
     full_name: str
@@ -77,3 +93,6 @@ class SharedDataResponse(BaseModel):
     profile: Optional[SharedHealthProfile] = None
     visits: List[SharedVisit] = []
     unlinked_reports: List[SharedReport] = []
+
+    class Config:
+        from_attributes = True

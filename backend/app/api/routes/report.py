@@ -165,3 +165,27 @@ async def process_report_api(
         "data": result,
         "file_url": report.file_url
     }
+
+@router.post("/{report_id}/link/{visit_id}")
+async def link_report_to_visit(
+    report_id: int,
+    visit_id: int,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
+    """Link an existing report to a clinical visit"""
+    try:
+        report = session.get(Report, report_id)
+        if not report:
+            raise HTTPException(status_code=404, detail="Report not found")
+            
+        if report.patient_id != current_user.id:
+            raise HTTPException(status_code=403, detail="Not authorized")
+            
+        report.visit_id = visit_id
+        session.add(report)
+        session.commit()
+        
+        return {"status": "success", "message": f"Report {report_id} linked to visit {visit_id}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error linking report: {str(e)}")
