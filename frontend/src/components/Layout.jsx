@@ -5,7 +5,7 @@ import ConfirmationModal from './ui/ConfirmationModal';
 import {
   LayoutDashboard, FolderOpen, Activity,
   QrCode, Settings, Plus, Menu, X, Search,
-  LogOut
+  LogOut, RefreshCcw
 } from 'lucide-react';
 
 export default function Layout({ children }) {
@@ -102,7 +102,7 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="flex h-screen bg-[#F4F7FB] font-sans text-slate-800 overflow-hidden">
+    <div className="flex h-screen bg-[#F8F9FA] font-inter text-slate-800 overflow-hidden">
 
       {isSidebarOpen && (
         <div
@@ -168,14 +168,20 @@ export default function Layout({ children }) {
             </button>
 
             {activeTab === 'Dashboard' ? (
-              <h2 className="text-[18px] lg:text-[22px] font-bold text-slate-800 tracking-tight truncate max-w-[160px] sm:max-w-[280px] md:max-w-none">
-                Welcome, {getUserDisplayName()}
-              </h2>
+              <div className="flex items-center gap-4 flex-1">
+                <h2 className="text-[18px] lg:text-[22px] font-black text-slate-800 tracking-tight truncate max-w-[160px] sm:max-w-[280px] md:max-w-none">
+                  Welcome, {getUserDisplayName()}
+                </h2>
+                <div className="hidden md:flex items-center gap-2 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-100/50 group cursor-pointer hover:bg-emerald-100 transition-all active:scale-95 shadow-sm">
+                  <RefreshCcw size={14} className="text-[#00BFA5] group-hover:rotate-180 transition-transform duration-700" strokeWidth={3} />
+                  <span className="text-[10px] font-black text-[#00BFA5] uppercase tracking-widest whitespace-nowrap">Sync Data</span>
+                </div>
+              </div>
             ) : (
-              <div className="hidden sm:flex items-center gap-6 w-full opacity-100 transition-opacity duration-300">
-                <div className="flex items-center bg-white/60 border border-slate-200/80 rounded-full px-5 py-2 w-full shadow-[0_2px_8px_-4px_rgba(0,0,0,0.05)] focus-within:bg-white focus-within:border-teal-500/30 transition-all">
-                  <Search size={16} className="text-slate-400 mr-3" />
-                  <input type="text" placeholder="Search records, doctors, or results..." className="w-full bg-transparent outline-none text-[14px] font-medium placeholder:text-slate-400 text-slate-700" />
+              <div className="hidden sm:flex items-center gap-6 w-full opacity-100 transition-opacity duration-300 max-w-md">
+                <div className="flex items-center bg-white border border-slate-200 rounded-[18px] px-5 py-2.5 w-full shadow-sm focus-within:ring-2 focus-within:ring-teal-500/10 focus-within:border-teal-500/30 transition-all">
+                  <Search size={16} className="text-slate-400 mr-3" strokeWidth={2.5} />
+                  <input type="text" placeholder="Search your health vault..." className="w-full bg-transparent outline-none text-[14px] font-semibold placeholder:text-slate-400 text-slate-700" />
                 </div>
               </div>
             )}
@@ -241,7 +247,6 @@ export default function Layout({ children }) {
         message="Are you sure you want to sign out? You'll need to sign in again to access your health records."
         confirmText="Sign Out"
         cancelText="Cancel"
-        confirmVariant="danger"
         cancelVariant="outline"
       />
     </div>
@@ -250,9 +255,20 @@ export default function Layout({ children }) {
 
 function SidebarItem({ icon: Icon, label, active, onClick }) {
   return (
-    <button onClick={onClick} className={`cursor-pointer w-full flex items-center space-x-3.5 px-4 py-3 rounded-[12px] text-[14.5px] font-semibold transition-all ${active ? 'bg-teal-50/80 text-[#0E7B62]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'}`}>
-      <Icon className={`w-[20px] h-[20px] ${active ? 'text-[#0E7B62]' : 'text-slate-400'}`} strokeWidth={active ? 2.5 : 2} />
-      <span>{label}</span>
+    <button
+      onClick={onClick}
+      className={`relative cursor-pointer w-full flex items-center space-x-4 px-6 py-4 transition-all duration-300 overflow-hidden ${active
+          ? 'text-[#00BFA5]'
+          : 'text-slate-400 hover:text-slate-700'
+        }`}
+    >
+      {active && (
+        <div className="absolute left-0 top-2 bottom-2 w-1.5 bg-[#00BFA5] rounded-r-xl shadow-[2px_0_12px_rgba(0,191,165,0.4)]"></div>
+      )}
+      <Icon className={`w-[22px] h-[22px] transition-all duration-500 ${active ? 'text-[#00BFA5] scale-110' : 'text-slate-300'}`} strokeWidth={active ? 2.5 : 2} />
+      <span className={`text-[15.5px] tracking-tight transition-all duration-300 ${active ? 'font-black' : 'font-bold'}`}>
+        {label}
+      </span>
     </button>
   );
 }

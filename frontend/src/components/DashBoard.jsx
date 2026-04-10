@@ -108,12 +108,12 @@ export default function DashBoard() {
   if (loading) return <LoadingDashboard />;
 
   return (
-    <div className="max-w-[1280px] mx-auto space-y-8 lg:space-y-10 pb-12 pt-4 fadeIn">
+    <div className="max-w-[1440px] mx-auto space-y-10 lg:space-y-14 pb-16 pt-6 fadeIn">
       <StatsGrid stats={statsData} />
 
       <BannerGrid banners={bannerData} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-8 lg:gap-10">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-10 lg:gap-14">
         <ActivityFeed activities={activities} />
 
         <div className="space-y-8">

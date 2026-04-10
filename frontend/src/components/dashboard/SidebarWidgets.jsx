@@ -10,69 +10,82 @@ import {
 const RecordCompletionCard = ({ percentage = 85 }) => {
   const navigate = useNavigate();
   return (
-    <Card className="hover:border-[#0E7B62]/20 transition-all duration-300">
-      <h4 className="text-[11px] font-bold tracking-[0.2em] text-slate-400 uppercase mb-5">
-        Profile Integrity
-      </h4>
-      <div className="flex justify-between items-end mb-3">
-        <span className="text-[11px] font-extrabold text-[#0E7B62] tracking-wider bg-teal-50 px-2.5 py-1 rounded-full uppercase">
-          {percentage > 80 ? 'Optimal' : 'Incomplete'}
-        </span>
-        <span className="text-sm font-black text-slate-800">{percentage}%</span>
+    <Card className="rounded-[32px] border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white p-7 hover:shadow-xl transition-all duration-500 group">
+      <div className="flex items-center gap-2 mb-6">
+         <div className="w-1.5 h-4 bg-[#00BFA5] rounded-full"></div>
+         <h4 className="text-[11px] font-black tracking-[0.2em] text-slate-400 uppercase">
+           Profile Integrity
+         </h4>
       </div>
-      <div className="h-2 w-full bg-slate-100 rounded-full mb-6 overflow-hidden border border-slate-200/30">
+      <div className="flex justify-between items-end mb-4">
+        <span className="text-[10px] font-black text-[#00BFA5] tracking-widest bg-emerald-50 px-3 py-1.5 rounded-xl uppercase">
+          {percentage > 80 ? 'Optimal Status' : 'Needs Review'}
+        </span>
+        <div className="flex flex-col items-end">
+           <span className="text-2xl font-black text-slate-900 tracking-tight leading-none">{percentage}%</span>
+        </div>
+      </div>
+      <div className="h-4 w-full bg-slate-50 rounded-full mb-8 overflow-hidden border border-slate-100 p-1">
         <div
-          className="h-full bg-[#0E7B62] rounded-full transition-all duration-1000 ease-out"
+          className="h-full bg-gradient-to-r from-emerald-400 to-[#00BFA5] rounded-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(0,191,165,0.4)]"
           style={{ width: `${percentage}%` }}
         ></div>
       </div>
-      <Button variant="secondary" fullWidth size="small" onClick={() => navigate('/settings')}>
-        Review Missing Data
-      </Button>
+      <button 
+        onClick={() => navigate('/settings')}
+        className="w-full py-3.5 bg-slate-900 text-white rounded-[18px] text-[13px] font-black tracking-tight hover:bg-slate-800 transition-all shadow-md active:scale-[0.98]"
+      >
+        Complete Information
+      </button>
     </Card>
   );
 };
 
 const VitalStatsCard = ({ vitals = {} }) => {
   const stats = [
-    { label: 'BPM', value: vitals.hr || '--', icon: Heart, color: 'text-rose-500', bg: 'bg-rose-50' },
-    { label: 'BP', value: vitals.bp || '--', icon: Activity, color: 'text-indigo-500', bg: 'bg-indigo-50' },
-    { label: 'SpO2', value: vitals.spo2 ? `${vitals.spo2}%` : '--', icon: Droplets, color: 'text-teal-500', bg: 'bg-teal-50' },
-    { label: 'RESP', value: vitals.resp_rate || '--', icon: Wind, color: 'text-slate-500', bg: 'bg-slate-50' }
+    { label: 'BPM', value: vitals.hr || '--', icon: Heart, color: 'text-rose-500', bg: 'bg-rose-50/70', cardBg: 'bg-rose-50/30' },
+    { label: 'BP', value: vitals.bp || '--', icon: Activity, color: 'text-indigo-600', bg: 'bg-indigo-50/70', cardBg: 'bg-indigo-50/30' },
+    { label: 'SpO2', value: vitals.spo2 ? `${vitals.spo2}%` : '--', icon: Droplets, color: 'text-[#00BFA5]', bg: 'bg-emerald-50/70', cardBg: 'bg-emerald-50/30' },
+    { label: 'RESP', value: vitals.resp_rate || '--', icon: Wind, color: 'text-orange-500', bg: 'bg-orange-50/70', cardBg: 'bg-orange-50/30' }
   ];
 
   return (
-    <Card className="hover:border-slate-300 transition-all duration-300">
-      <div className="flex justify-between items-center mb-6">
+    <Card className="rounded-[32px] border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white p-7">
+      <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-2.5">
-          <div className="w-[4px] h-5 bg-[#0E7B62] rounded-full shadow-[0_0_8px_rgba(14,123,98,0.3)]"></div>
-          <h4 className="text-[11px] font-bold tracking-[0.2em] text-slate-500 uppercase">
+          <div className="w-1.5 h-4 bg-[#00BFA5] rounded-full"></div>
+          <h4 className="text-[11px] font-black tracking-[0.2em] text-slate-400 uppercase">
             Vital Snapshot
           </h4>
         </div>
-        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">LIVE DATA</span>
+        <div className="flex items-center gap-1.5 bg-emerald-50 px-2 py-1 rounded-lg">
+           <div className="w-1.5 h-1.5 bg-[#00BFA5] rounded-full animate-pulse shadow-[0_0_4px_#00BFA5]"></div>
+           <span className="text-[9px] font-black text-[#00BFA5] uppercase tracking-widest">Live Sync</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         {stats.map((stat, i) => (
-          <div key={i} className="flex items-center gap-3 p-3 bg-white border border-slate-100 rounded-2xl hover:border-slate-200 transition-colors">
-            <div className={`w-9 h-9 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center shrink-0`}>
-              <stat.icon size={18} strokeWidth={2.5} />
+          <div key={i} className={`flex flex-col gap-3 p-5 rounded-[24px] border border-transparent transition-all duration-300 hover:border-slate-100/50 hover:shadow-md ${stat.cardBg}`}>
+            <div className={`w-10 h-10 ${stat.bg} ${stat.color} rounded-[14px] flex items-center justify-center shrink-0 shadow-sm`}>
+              <stat.icon size={20} strokeWidth={3} />
             </div>
             <div className="min-w-0">
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] truncate mb-0.5">{stat.label}</p>
-              <p className="text-sm font-black text-slate-800 tabular-nums">{stat.value}</p>
+              <p className="text-2xl font-black text-slate-900 tracking-tighter mb-0.5 leading-none">{stat.value}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.1em]">{stat.label}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 pt-5 border-t border-slate-50 flex items-center justify-between text-[11px] font-bold text-slate-400 italic">
-        <div className="flex items-center gap-1.5 font-bold not-italic">
-            <ShieldCheck size={14} className="text-[#0E7B62]" />
-            <span className="text-[#0E7B62] uppercase tracking-widest text-[9px] font-black">Encrypted</span>
+      <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+            <div className="p-1 rounded-lg bg-emerald-50">
+               <ShieldCheck size={14} className="text-[#00BFA5]" />
+            </div>
+            <span className="text-[#00BFA5] uppercase tracking-[0.15em] text-[15px] font-black">Encrypted Channel</span>
         </div>
-        <span>Last synced {vitals.last_sync || 'just now'}</span>
+        <span className="text-[10px] font-bold text-slate-400 capitalize">{vitals.last_sync || 'synced just now'}</span>
       </div>
     </Card>
   );
