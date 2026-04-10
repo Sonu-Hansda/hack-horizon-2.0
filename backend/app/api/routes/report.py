@@ -2,12 +2,12 @@ from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, s
 import shutil, os
 from typing import Optional, List
 from sqlmodel import Session, select
-from datetime import datetime
-
+from datetime import datetime, timedelta
 from app.db.session import get_session
 from app.db.models import Report, User
 from app.api.deps import get_current_user
 from app.services.report_pipeline import process_report
+from sqlalchemy import func
 
 router = APIRouter(prefix="/reports", tags=["reports"])
 
@@ -40,7 +40,45 @@ async def get_my_reports(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching reports: {str(e)}")
 
-@router.get("", response_model=List[dict])
+@router.get("/total-reports")
+def total_reports(session: Session = Depends(get_session)):
+    count = session.exec(
+        select(func.count()).select_from(Report)
+    ).one()
+
+    return {"total_reports": count}
+
+@router.get("/recent-reports")
+def recent_reports(session: Session = Depends(get_session)):
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+
+    count = session.exec(
+        select(func.count())
+        .select_from(Report)
+        .where(Report.uploaded_at >= thirty_days_ago)
+    ).one()
+
+    return {"recent_reports": count}
+
+@router.get("/active-medications")
+def active_medications(session: Session = Depends(get_session)):
+
+    latest_prescription = session.exec(
+        select(Report)
+        .where(Report.document_type == "prescription")
+        .order_by(Report.uploaded_at.desc())
+    ).first()
+
+    if not latest_prescription or not latest_prescription.extracted_data:
+        return {"active_medications": 0}
+
+    medications = latest_prescription.extracted_data.get("medications", [])
+
+    return {
+        "active_medications": len(medications)
+    }
+
+@router.get("/reports", response_model=List[dict])
 async def get_reports(
     session: Session = Depends(get_session),
     skip: int = 0,
@@ -72,7 +110,6 @@ async def get_report(
     report_id: int,
     session: Session = Depends(get_session)
 ):
-    """Get a specific report by ID"""
     try:
         report = session.get(Report, report_id)
         if not report:
@@ -101,7 +138,6 @@ async def process_report_api(
     visit_id: Optional[int] = Form(None),
     current_user: User = Depends(get_current_user)
 ):
-    # Unique filename to prevent collisions and fix URL visibility
     unique_filename = f"{datetime.utcnow().timestamp()}_{file.filename}"
     file_path = f"{UPLOAD_DIR}/{unique_filename}"
 
