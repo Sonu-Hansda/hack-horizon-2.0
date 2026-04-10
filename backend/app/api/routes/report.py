@@ -7,6 +7,7 @@ from app.db.session import get_session
 from app.db.models import Report, User
 from app.api.deps import get_current_user
 from app.services.report_pipeline import process_report
+from app.services.report_chat_service import summarize_report
 from sqlalchemy import func
 
 router = APIRouter(prefix="/reports", tags=["reports"])
@@ -189,3 +190,40 @@ async def link_report_to_visit(
         return {"status": "success", "message": f"Report {report_id} linked to visit {visit_id}"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error linking report: {str(e)}")
+@router.delete("/{report_id}")
+async def delete_report(
+    report_id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    report = session.get(Report, report_id)
+
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    if report.patient_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this report")
+
+    session.delete(report)
+    session.commit()
+
+    return {"detail": "Report deleted successfully"}
+
+@router.get("/summary/{report_id}")
+def chat_report(
+    report_id: int,
+    session: Session = Depends(get_session)
+):
+    report = session.get(Report, report_id)
+
+    if not report:
+        return {"error": "Report not found"}
+
+    if not report.extracted_data:
+        return {"error": "No extracted data available"}
+
+    answer = summarize_report(report.document_type, report.extracted_data)
+
+    return {
+        "answer": answer
+    }
