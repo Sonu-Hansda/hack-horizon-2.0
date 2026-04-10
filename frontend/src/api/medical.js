@@ -84,6 +84,15 @@ export const medicalAPI = {
       throw error.response?.data || { detail: 'Failed to link report to visit' };
     }
   },
+
+  getDashboardSummary: async () => {
+    try {
+      const response = await api.get('/dashboard/summary');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { detail: 'Failed to fetch dashboard summary' };
+    }
+  },
 };
 
 export default medicalAPI;
