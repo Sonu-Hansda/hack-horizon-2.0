@@ -1,15 +1,51 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import ConfirmationModal from './ui/ConfirmationModal';
 import {
   ShieldPlus, LayoutDashboard, FolderOpen, Pill, BarChart2, Activity,
-  QrCode, Settings, Plus, Bell, HelpCircle, Menu, X, Search
+  QrCode, Settings, Plus, Bell, HelpCircle, Menu, X, Search,
+  LogOut, User
 } from 'lucide-react';
 
-export default function Layout({ activeTab, setActiveTab, children }) {
+export default function Layout({ children }) {
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('Dashboard');
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setIsSidebarOpen(false);
+  };
+
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
+
+  // Get user display name
+  const getUserDisplayName = () => {
+    if (!user) return 'Welcome';
+    
+    if (user.full_name) {
+      return user.full_name.split(' ')[0]; // First name only
+    }
+    
+    if (user.email) {
+      return user.email.split('@')[0]; // Username part of email
+    }
+    
+    return 'User';
   };
 
   return (
@@ -57,8 +93,33 @@ export default function Layout({ activeTab, setActiveTab, children }) {
             <SidebarItem icon={Settings} label="Settings" active={activeTab === 'Settings'} onClick={() => handleTabChange('Settings')} />
           </div>
 
-          {/* New Record Button */}
-          <div className="p-4 border-t border-slate-100 bg-white sticky bottom-0">
+          {/* User Profile & Logout */}
+          <div className="p-4 border-t border-slate-100 bg-white sticky bottom-0 space-y-4">
+            {/* User Info */}
+            <div className="flex items-center gap-3 p-3 rounded-[12px] bg-slate-50">
+              <div className="w-10 h-10 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center">
+                <User size={20} strokeWidth={2} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-bold text-slate-800 truncate">
+                  {getUserDisplayName()}
+                </p>
+                <p className="text-[11px] text-slate-500 font-medium truncate">
+                  {user?.email || 'Patient'}
+                </p>
+              </div>
+            </div>
+
+            {/* Logout Button */}
+            <button 
+              onClick={handleLogoutClick}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-[12px] text-[13px] font-bold text-slate-600 hover:text-red-600 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
+            >
+              <LogOut size={16} strokeWidth={2} />
+              Sign Out
+            </button>
+
+            {/* New Record Button */}
             <button className="w-full bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-2 py-3.5 rounded-[14px] text-sm font-bold transition-all shadow-md hover:shadow-lg active:scale-[0.98]">
               <Plus size={18} strokeWidth={2.5} />
               New Record
@@ -78,7 +139,7 @@ export default function Layout({ activeTab, setActiveTab, children }) {
 
             {activeTab === 'Dashboard' ? (
               <h2 className="text-[18px] lg:text-[22px] font-bold text-slate-800 tracking-tight truncate max-w-[160px] sm:max-w-[280px] md:max-w-none">
-                Welcome, Dr. Vance
+                Welcome, {getUserDisplayName()}
               </h2>
             ) : (
               <div className="hidden sm:flex items-center gap-6 w-full opacity-100 transition-opacity duration-300">
@@ -101,11 +162,21 @@ export default function Layout({ activeTab, setActiveTab, children }) {
             </button>
             <div className="flex items-center gap-3 cursor-pointer sm:pl-6 sm:border-l border-slate-300 group">
               <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-slate-200 overflow-hidden border-[3px] border-white shadow-sm shrink-0 group-hover:scale-105 transition-transform duration-300">
-                <img src="/doctor_avatar.png" alt="User" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = 'https://ui-avatars.com/api/?name=Julian+Vance&background=475569&color=fff' }} />
+                {user?.email ? (
+                  <div className="w-full h-full bg-teal-100 flex items-center justify-center text-teal-600 font-bold text-lg">
+                    {getUserDisplayName().charAt(0).toUpperCase()}
+                  </div>
+                ) : (
+                  <img src="/doctor_avatar.png" alt="User" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = 'https://ui-avatars.com/api/?name=Patient&background=475569&color=fff' }} />
+                )}
               </div>
               <div className="hidden md:block">
-                <p className="text-[14px] font-bold text-slate-800 leading-tight">Julian Vance</p>
-                <p className="text-[12px] text-slate-500 font-medium mt-0.5">Internal Medicine</p>
+                <p className="text-[14px] font-bold text-slate-800 leading-tight">
+                  {getUserDisplayName()}
+                </p>
+                <p className="text-[12px] text-slate-500 font-medium mt-0.5">
+                  {user?.email ? 'Patient' : 'Guest'}
+                </p>
               </div>
             </div>
           </div>
@@ -116,6 +187,19 @@ export default function Layout({ activeTab, setActiveTab, children }) {
             {children}
         </div>
       </main>
+
+      {/* Logout Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showLogoutModal}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+        title="Sign Out"
+        message="Are you sure you want to sign out? You'll need to sign in again to access your health records."
+        confirmText="Sign Out"
+        cancelText="Cancel"
+        confirmVariant="danger"
+        cancelVariant="outline"
+      />
     </div>
   );
 }
