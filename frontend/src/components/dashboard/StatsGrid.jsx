@@ -1,12 +1,15 @@
 import React from 'react';
 import Card from '../ui/Card';
+import { useNavigate } from 'react-router-dom';
 
-const StatCard = ({ icon: Icon, value, label, badge, badgeColor, className = '' }) => {
+const StatCard = ({ icon: Icon, value, label, badge, badgeColor, link, className = '' }) => {
+  const navigate = useNavigate();
   return (
     <Card 
       hover 
       padding="none"
-      className={`flex flex-col justify-between h-[140px] lg:h-[160px] p-5 lg:p-6 group ${className}`}
+      onClick={() => link && navigate(link)}
+      className={`flex flex-col justify-between h-[140px] lg:h-[160px] p-5 lg:p-6 group cursor-pointer ${className}`}
     >
       <div className="flex justify-between items-start">
         <div className="p-2.5 lg:p-3 rounded-[12px] lg:rounded-[14px] bg-slate-50 text-slate-400 group-hover:text-[#0E7B62] group-hover:bg-teal-50/50 transition-all duration-300">
