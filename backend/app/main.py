@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.api.routes import auth, patient, visit, doctor, qr, report
 from app.db.session import create_db_and_tables
 from app.core.config import settings
 import os
 
 app = FastAPI(title="Digital Health Record Platform", version="1.0.0")
+
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,

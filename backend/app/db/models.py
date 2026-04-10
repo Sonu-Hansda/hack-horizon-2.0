@@ -77,6 +77,7 @@ class Medication(SQLModel, table=True):
 class Report(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     visit_id: Optional[int] = Field(default=None, foreign_key="visit.id")
+    patient_id: Optional[int] = Field(default=None, foreign_key="user.id")
     file_name: str
     file_type: str
     file_url: Optional[str] = None
@@ -92,6 +93,7 @@ class QRToken(SQLModel, table=True):
     patient_id: int = Field(foreign_key="user.id")
     access_type: str
     allowed_sections: str
+    selected_report_ids: Optional[str] = None
     expires_at: datetime
     created_at: datetime = Field(default_factory=datetime.utcnow)
     used_at: Optional[datetime] = None
