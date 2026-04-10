@@ -404,6 +404,7 @@ export default function MedicalReport() {
         isOpen={showDetailModal}
         onClose={closeDetailModal}
         report={selectedReport}
+        summary={summary}
       />
     </div>
   )

@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Calendar, User, Pill, FileText, TestTube, FileImage, AlertTriangle } from 'lucide-react';
 
-const RecordDetailModal = ({ isOpen, onClose, report }) => {
+const RecordDetailModal = ({ isOpen, onClose, report, summary}) => {
   if (!isOpen || !report) return null;
 
   const formatDate = (dateString) => {
@@ -124,51 +124,8 @@ const RecordDetailModal = ({ isOpen, onClose, report }) => {
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Right Side - Details */}
-            <div className="lg:w-2/5 p-6">
-              <h4 className="text-sm font-semibold text-slate-700 mb-4">Extracted Information</h4>
-              
-              {/* Date and Time */}
-              <div className="mb-5">
-                <div className="flex items-center gap-2 text-slate-600 mb-1">
-                  <Calendar size={16} className={
-                    isPrescription ? 'text-teal-500' : 'text-blue-500'
-                  } />
-                  <span className="font-medium">Date & Time</span>
-                </div>
-                <p className="text-slate-800 font-semibold">{formatDate(report.uploaded_at)}</p>
-              </div>
-
-              {/* Doctor Name */}
-              {extractedData.doctor_name && (
-                <div className="mb-5">
-                  <div className="flex items-center gap-2 text-slate-600 mb-1">
-                    <User size={16} className={
-                      isPrescription ? 'text-teal-500' : 'text-blue-500'
-                    } />
-                    <span className="font-medium">Doctor</span>
-                  </div>
-                  <p className="text-slate-800 font-semibold">Dr. {extractedData.doctor_name}</p>
-                </div>
-              )}
-
-              {/* Diagnostic Report Details */}
-              {!isPrescription && (
-                <>
-                  {/* Patient Name for Diagnostic */}
-                  {extractedData.patient_name && (
-                    <div className="mb-5">
-                      <div className="flex items-center gap-2 text-slate-600 mb-1">
-                        <User size={16} className="text-blue-500" />
-                        <span className="font-medium">Patient</span>
-                      </div>
-                      <p className="text-slate-800 font-semibold">{extractedData.patient_name}</p>
-                    </div>
-                  )}
-
-                  {/* Lab Results */}
+              {/* Lab Results */}
                   {extractedData.lab_results && extractedData.lab_results.length > 0 && (
                     <div className="mb-5">
                       <div className="flex items-center justify-between mb-3">
@@ -199,7 +156,7 @@ const RecordDetailModal = ({ isOpen, onClose, report }) => {
                               <th className="text-left py-2 px-3 font-medium text-slate-600">Test</th>
                               <th className="text-left py-2 px-3 font-medium text-slate-600">Value</th>
                               <th className="text-left py-2 px-3 font-medium text-slate-600">Unit</th>
-                              <th className="text-left py-2 px-3 font-medium text-slate-600">Reference Range</th>
+                              {/* <th className="text-left py-2 px-3 font-medium text-slate-600">Reference Range</th> */}
                               <th className="text-left py-2 px-3 font-medium text-slate-600">Status</th>
                             </tr>
                           </thead>
@@ -226,7 +183,7 @@ const RecordDetailModal = ({ isOpen, onClose, report }) => {
                                   </span>
                                 </td>
                                 <td className="py-2 px-3 text-slate-600">{result.unit}</td>
-                                <td className="py-2 px-3 text-slate-600">{result.reference_range}</td>
+                                {/* <td className="py-2 px-3 text-slate-600">{result.reference_range}</td> */}
                                 <td className="py-2 px-3">
                                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                                     result.status === 'low' ? 'bg-amber-100 text-amber-700' :
@@ -272,6 +229,55 @@ const RecordDetailModal = ({ isOpen, onClose, report }) => {
                       </div>
                     </div>
                   )}
+
+            </div>
+            
+            {/* Right Side - Details */}
+            <div className="lg:w-2/5 p-6">
+              {/* <h4 className="text-sm font-semibold text-slate-700 mb-4">Extracted Information</h4> */}
+              
+              {/* Date and Time */}
+              {/* <div className="mb-5">
+                <div className="flex items-center gap-2 text-slate-600 mb-1">
+                  <Calendar size={16} className={
+                    isPrescription ? 'text-teal-500' : 'text-blue-500'
+                  } />
+                  <span className="font-medium">Date & Time</span>
+                </div>
+                <p className="text-slate-800 font-semibold">{formatDate(report.uploaded_at)}</p>
+              </div> */}
+
+              {/* Doctor Name */}
+              {extractedData.doctor_name && (
+                <div className="mb-5">
+                  <div className="flex items-center gap-2 text-slate-600 mb-1">
+                    <User size={16} className={
+                      isPrescription ? 'text-teal-500' : 'text-blue-500'
+                    } />
+                    <span className="font-medium">Doctor</span>
+                  </div>
+                  <p className="text-slate-800 font-semibold">Dr. {extractedData.doctor_name}</p>
+                </div>
+              )}
+
+              {/* Diagnostic Report Details */}
+              {!isPrescription && (
+                <>
+                  {/* Patient Name for Diagnostic */}
+                  {extractedData.patient_name && (
+                    <div className="mb-5">
+                      <div className="flex items-center gap-2 text-slate-600 mb-1">
+                        <User size={16} className="text-blue-500" />
+                        <span className="font-medium">Patient</span>
+                      </div>
+                      <p className="text-slate-800 font-semibold">{extractedData.patient_name}</p>
+                    </div>
+                  )}
+
+                  <div className="bg-slate-50 rounded-lg p-4 mt-5">
+                    <h4 className="text-sm font-semibold text-slate-700 mb-2">Summary</h4>
+                    {summary}
+                  </div>
 
                   {/* Critical Alerts */}
                   {extractedData.critical_alerts && (
