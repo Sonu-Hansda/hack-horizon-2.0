@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from app.api.routes import auth, patient, visit, doctor, qr, report, report_chat
+from app.api.routes import auth, patient, visit, doctor, qr, report, report_chat, dashboard
 from app.db.session import create_db_and_tables
 from app.core.config import settings
 import os
@@ -25,6 +25,7 @@ app.include_router(doctor.router)
 app.include_router(qr.router)
 app.include_router(report.router)
 app.include_router(report_chat.router)
+app.include_router(dashboard.router)
 
 @app.on_event("startup")
 def on_startup():

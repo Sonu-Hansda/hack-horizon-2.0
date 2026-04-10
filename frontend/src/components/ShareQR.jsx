@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {
   RefreshCw,
   Activity, FlaskConical, ShieldCheck,
-  User, Check, Clock, ExternalLink, FileText
+  User, Check, ChevronRight, Clock, ExternalLink, FileText
 } from 'lucide-react';
 import { qrAPI } from '../api';
-import Button from './ui/Button';
 
 export default function ShareQR() {
   const [timeLeft, setTimeLeft] = useState(0);
@@ -106,9 +105,16 @@ export default function ShareQR() {
     : '';
 
   return (
-    <div className="max-w-[1100px] mx-auto space-y-6 lg:space-y-8 pb-12 pt-2 xl:pt-4 fadeIn relative">
-      <div className="mb-10 text-center lg:text-left">
-        <h2 className="text-3xl lg:text-[38px] font-extrabold text-slate-800 tracking-tight mb-3">Secure Record Sharing</h2>
+    <div className="max-w-[1440px] mx-auto space-y-10 lg:space-y-14 pb-16 pt-6 fadeIn relative">
+      <div className="mb-4 pl-0 lg:pl-2">
+        <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.25em] uppercase mb-4">
+          <span className="text-slate-400">MediSync</span>
+          <ChevronRight size={12} className="text-slate-300" strokeWidth={3} />
+          <span className="text-[#00BFA5]">Privacy Vault</span>
+        </div>
+        <h2 className="text-3xl lg:text-[44px] font-black text-slate-900 tracking-tight leading-none mb-4">
+          Security Control
+        </h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-6 lg:gap-10 items-start">
@@ -116,7 +122,7 @@ export default function ShareQR() {
         <div className="space-y-6">
           <div className="bg-white rounded-[32px] shadow-[0_4px_24px_-8px_rgba(0,0,0,0.08)] border border-slate-100 p-8 pt-10 relative flex flex-col items-center group">
 
-            <div className={`w-[240px] h-[240px] lg:w-[280px] lg:h-[280px] bg-slate-50 rounded-[28px] mb-8 overflow-hidden relative shadow-inner border-2 border-slate-100/50 flex items-center justify-center p-6 ${isGenerating ? 'animate-pulse' : ''}`}>
+            <div className={`w-[260px] h-[260px] lg:w-[320px] lg:h-[320px] bg-slate-50 rounded-[40px] mb-8 overflow-hidden relative shadow-inner border-2 border-slate-100 flex items-center justify-center p-8 ${isGenerating ? 'animate-pulse' : ''}`}>
               {activeToken ? (
                 <img
                   src={qrImageUrl}
@@ -125,82 +131,81 @@ export default function ShareQR() {
                 />
               ) : (
                 <div className="text-center p-4">
-                  <ShieldCheck size={48} className="text-slate-200 mx-auto mb-4" />
-                  <p className="text-[11px] font-bold text-slate-300 uppercase tracking-widest">Awaiting Generation</p>
+                  <div className="w-16 h-16 bg-slate-100/50 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-white">
+                    <ShieldCheck size={32} className="text-slate-200" strokeWidth={1.5} />
+                  </div>
+                  <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest leading-relaxed">System Awaiting<br />Authentication</p>
                 </div>
               )}
             </div>
 
             {activeToken ? (
-              <div className="w-full text-center space-y-4">
-                <div className="flex items-center justify-center gap-2 text-[#0E7B62]">
-                  <Clock size={16} />
-                  <span className="text-base font-black tabular-nums tracking-wider">{formatTime(timeLeft)}</span>
+              <div className="w-full text-center space-y-5">
+                <div className="flex items-center justify-center gap-3 text-[#00BFA5] bg-emerald-50 self-center mx-auto px-5 py-2.5 rounded-2xl border border-emerald-100/50 w-max shadow-sm">
+                  <Clock size={16} strokeWidth={3} />
+                  <span className="text-[15px] font-black tabular-nums tracking-[0.1em]">{formatTime(timeLeft)} Remaining</span>
                 </div>
 
-                <div className="pt-4 flex gap-3">
-                  <Button
-                    variant="outline"
-                    className="flex-1 text-[13px]"
+                <div className="pt-2 flex gap-4">
+                  <button
                     onClick={() => {
                       navigator.clipboard.writeText(shareUrl);
                       alert('Share link copied to clipboard!');
                     }}
+                    className="flex-1 flex items-center justify-center gap-2.5 py-4 bg-white border border-slate-200 rounded-[18px] text-[13px] font-black text-slate-700 hover:bg-slate-50 transition-all shadow-sm active:scale-95"
                   >
-                    Copy Link
-                  </Button>
-                  <Button
-                    variant="teal"
-                    className="flex-1 text-[13px]"
+                    Copy Hash
+                  </button>
+                  <button
                     onClick={() => window.open(shareUrl, '_blank')}
+                    className="flex-1 flex items-center justify-center gap-2.5 py-4 bg-slate-100 text-slate-800 rounded-[18px] text-[13px] font-black hover:bg-slate-200 transition-all shadow-sm active:scale-95"
                   >
-                    <ExternalLink size={14} />
-                    Preview
-                  </Button>
+                    <ExternalLink size={15} strokeWidth={2.5} />
+                    View Live
+                  </button>
                 </div>
               </div>
-            ) : (
-              <div className="w-full text-center py-2">
-              </div>
-            )}
+            ) : null}
 
-            <div className="w-full pt-8 mt-2 border-t border-slate-50">
-              <Button
-                variant="primary"
+            <div className="w-full pt-10 mt-2 border-t border-slate-50">
+              <button
                 onClick={handleGenerate}
-                loading={isGenerating}
-                className="w-full h-[56px] rounded-2xl"
+                disabled={isGenerating}
+                className="w-full py-5 bg-slate-900 text-white rounded-[22px] font-black text-[15px] uppercase tracking-widest shadow-2xl shadow-slate-900/40 hover:scale-[1.02] transition-all active:scale-[0.98] flex items-center justify-center gap-3 border border-white/10"
               >
-                <RefreshCw size={18} className={isGenerating ? 'animate-spin' : ''} />
-                {activeToken ? 'Regenerate Access' : 'Generate Secure Link'}
-              </Button>
+                <RefreshCw size={18} className={isGenerating ? 'animate-spin' : ''} strokeWidth={3} />
+                {activeToken ? 'Refresh Protocol' : 'Initialize Access'}
+              </button>
             </div>
           </div>
         </div>
 
         {/* Right Column (Controls) */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-[32px] shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)] border border-slate-100 p-8">
-            <h3 className="text-[20px] font-extrabold text-slate-800 mb-8 border-b border-slate-50 pb-4">Access Configuration</h3>
+        <div className="space-y-8">
+          <div className="bg-white/40 backdrop-blur-sm rounded-[32px] border border-white/80 p-8 lg:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+            <h3 className="text-[20px] font-black text-slate-900 mb-8 tracking-tight flex items-center gap-3">
+              <div className="w-1.5 h-6 bg-[#00BFA5] rounded-full"></div>
+              Permission Nodes
+            </h3>
 
-            <div className="space-y-4 mb-10">
+            <div className="space-y-5 mb-12">
               <PermissionToggle
-                title="Vital Statistics"
-                desc="HR, BP, SpO2, and Respiratory rates"
+                title="Biological Metrics"
+                desc="Heart rate, pressure, and clinical vitals"
                 icon={Activity}
                 active={permissions.vitals}
                 onClick={() => togglePermission('vitals')}
               />
               <PermissionToggle
-                title="Biometric Baseline"
-                desc="Age, height, weight, and blood group"
+                title="Identity Baseline"
+                desc="Physical attributes and encrypted profile"
                 icon={User}
                 active={permissions.biometrics}
                 onClick={() => togglePermission('biometrics')}
               />
               <PermissionToggle
-                title="Medical Records"
-                desc="Uploaded clinical reports and diagnostic summaries"
+                title="Document Vault"
+                desc="High-fidelity clinical reports and findings"
                 icon={FileText}
                 active={permissions.records}
                 onClick={() => togglePermission('records')}
@@ -208,38 +213,38 @@ export default function ShareQR() {
 
               {/* Conditional Report Selection */}
               {permissions.records && reports.length > 0 && (
-                <div className="ml-14 mt-2 p-4 bg-slate-50 rounded-[24px] border border-slate-100 space-y-4">
-                  <div className="flex bg-white p-1 rounded-xl border border-slate-100 mb-4">
+                <div className="ml-0 lg:ml-12 mt-4 p-6 bg-white/60 rounded-[32px] border border-white/80 shadow-inner space-y-5">
+                  <div className="flex bg-slate-100/50 p-1.5 rounded-[18px] border border-slate-200/50 mb-4">
                     <button
                       onClick={() => setSelectionMode('all')}
-                      className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${selectionMode === 'all' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500'}`}
+                      className={`flex-1 py-2.5 rounded-[14px] text-[11px] font-black tracking-widest uppercase transition-all ${selectionMode === 'all' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400'}`}
                     >
-                      Share All
+                      Sync All
                     </button>
                     <button
                       onClick={() => setSelectionMode('custom')}
-                      className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${selectionMode === 'custom' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500'}`}
+                      className={`flex-1 py-2.5 rounded-[14px] text-[11px] font-black tracking-widest uppercase transition-all ${selectionMode === 'custom' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400'}`}
                     >
-                      Custom Select
+                      Selective
                     </button>
                   </div>
 
                   {selectionMode === 'custom' && (
-                    <div className="space-y-2 max-h-[220px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="space-y-3 max-h-[260px] overflow-y-auto pr-3 custom-scrollbar">
                       {reports.map((report) => (
                         <div
                           key={report.id}
                           onClick={() => toggleReportSelection(report.id)}
-                          className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${selectedReportIds.includes(report.id) ? 'bg-white border-[#0E7B62] shadow-sm' : 'bg-transparent border-slate-100 grayscale'}`}
+                          className={`flex items-center gap-4 p-4 rounded-[18px] border cursor-pointer transition-all duration-300 ${activeToken ? 'opacity-50 pointer-events-none' : ''} ${selectedReportIds.includes(report.id) ? 'bg-white border-[#00BFA5] shadow-md' : 'bg-transparent border-slate-100 grayscale hover:grayscale-0'}`}
                         >
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${selectedReportIds.includes(report.id) ? 'bg-teal-50 text-[#0E7B62]' : 'bg-slate-100 text-slate-400'}`}>
-                            <FileText size={16} />
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border transition-colors ${selectedReportIds.includes(report.id) ? 'bg-emerald-50 text-[#00BFA5] border-emerald-100/50' : 'bg-slate-100 text-slate-300 border-slate-200'}`}>
+                            <FileText size={16} strokeWidth={2.5} />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-[12px] font-bold text-slate-800 truncate">{report.file_name}</p>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{report.document_type || 'Record'}</p>
+                            <p className={`text-[13px] font-black tracking-tight truncate ${selectedReportIds.includes(report.id) ? 'text-slate-900' : 'text-slate-400'}`}>{report.file_name}</p>
+                            <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest">{report.document_type || 'FINDING'}</p>
                           </div>
-                          <div className={`w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${selectedReportIds.includes(report.id) ? 'border-[#0E7B62] bg-[#0E7B62]' : 'border-slate-200 bg-white'}`}>
+                          <div className={`w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${selectedReportIds.includes(report.id) ? 'border-[#00BFA5] bg-[#00BFA5]' : 'border-slate-200 bg-white'}`}>
                             {selectedReportIds.includes(report.id) && <Check size={12} className="text-white" strokeWidth={4} />}
                           </div>
                         </div>
@@ -265,16 +270,16 @@ export default function ShareQR() {
               />
             </div>
 
-            <div>
-              <h4 className="text-[11px] font-extrabold tracking-[0.15em] text-slate-400 uppercase mb-4">Expiry Duration</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+            <div className="mt-8">
+              <h4 className="text-[10px] font-black tracking-[0.2em] text-slate-300 uppercase mb-5">Access Lifecycle</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[15, 30, 60, 1440].map((mins) => (
                   <button
                     key={mins}
                     onClick={() => setDuration(mins)}
-                    className={`py-3 rounded-[16px] text-[13px] font-bold transition-all border ${duration === mins ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-900/20' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-300'}`}
+                    className={`py-4 rounded-[20px] text-[13px] font-black transition-all border ${duration === mins ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-900/10' : 'bg-white text-slate-400 border-slate-100 hover:border-slate-300'}`}
                   >
-                    {mins < 60 ? `${mins}m` : mins === 60 ? '1h' : '24h'}
+                    {mins < 60 ? `${mins}M` : mins === 60 ? '1H' : '24H'}
                   </button>
                 ))}
               </div>
@@ -290,19 +295,19 @@ function PermissionToggle({ title, desc, icon: Icon, active, onClick }) {
   return (
     <div
       onClick={onClick}
-      className={`p-5 rounded-[24px] border flex items-center justify-between cursor-pointer transition-all duration-300 ${active ? 'bg-slate-50 border-slate-200' : 'bg-white border-slate-50 hover:bg-slate-50 hover:border-slate-100'}`}
+      className={`p-6 rounded-[32px] border flex items-center justify-between cursor-pointer transition-all duration-500 ${active ? 'bg-white border-emerald-100 shadow-lg shadow-emerald-500/5' : 'bg-white/40 border-slate-100 grayscale-[0.6] opacity-70 hover:grayscale-0 hover:opacity-100 hover:border-slate-200'}`}
     >
-      <div className="flex items-center gap-4">
-        <div className={`w-[48px] h-[48px] rounded-[18px] flex items-center justify-center transition-all ${active ? 'bg-[#E6F4F1] text-[#0E7B62]' : 'bg-slate-50 text-slate-400'}`}>
-          <Icon size={22} strokeWidth={2.5} />
+      <div className="flex items-center gap-5">
+        <div className={`w-[56px] h-[56px] rounded-[22px] flex items-center justify-center transition-all duration-500 ${active ? 'bg-emerald-50 text-[#00BFA5] scale-105' : 'bg-slate-50 text-slate-300'}`}>
+          <Icon size={24} strokeWidth={2.5} />
         </div>
         <div>
-          <h4 className={`text-[14.5px] font-extrabold mb-0.5 ${active ? 'text-slate-800' : 'text-slate-400'}`}>{title}</h4>
-          <p className="text-[12px] text-slate-500 font-medium">{desc}</p>
+          <h4 className={`text-[15px] font-black tracking-tight mb-1 ${active ? 'text-slate-900' : 'text-slate-400'}`}>{title}</h4>
+          <p className="text-[12px] text-slate-500 font-medium leading-tight">{desc}</p>
         </div>
       </div>
-      <div className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${active ? 'border-[#0E7B62] bg-[#0E7B62]' : 'border-slate-200 bg-white'}`}>
-        {active && <Check size={14} className="text-white" strokeWidth={4} />}
+      <div className={`w-7 h-7 rounded-xl border-2 transition-all duration-500 flex items-center justify-center ${active ? 'border-[#00BFA5] bg-[#00BFA5] rotate-[360deg]' : 'border-slate-200 bg-white'}`}>
+        {active && <Check size={16} className="text-white" strokeWidth={4} />}
       </div>
     </div>
   )

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
    CheckCircle2, PillBottle, HeartPulse, Activity, FileText,
-   ChevronDown, Syringe, Clock, Thermometer, Droplet, Layers, X,
-   Building, MapPin, User, ArrowRight, Link as LinkIcon, Plus,
+   ChevronDown, Syringe, Clock, Thermometer, Droplet, Plus, Layers, X,
+   Building, MapPin, User, ArrowRight, Link as LinkIcon,
    Stethoscope, FlaskConical, AlertCircle
 } from 'lucide-react';
 import { medicalAPI } from '../api';
@@ -47,17 +47,24 @@ export default function History() {
    const unlinkedReports = allReports.filter(r => !r.visit_id);
 
    return (
-      <div className="max-w-[1240px] mx-auto space-y-6 lg:space-y-8 pb-12 pt-2 xl:pt-4 fadeIn relative">
+      <div className="max-w-[1440px] mx-auto space-y-10 lg:space-y-14 pb-16 pt-6 fadeIn relative">
 
-         {/* Header section */}
-         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-16 pl-0 lg:pl-10">
+         {/* Header section with clinical journey title */}
+         <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-10 pl-0 lg:pl-10">
             <div>
-               <h2 className="text-3xl lg:text-[40px] font-extrabold text-slate-900 tracking-tight mb-3">Clinical Journey</h2>
-            </div>
-            <div className="flex items-center gap-3">
-               <div className="px-4 py-2 bg-teal-50 rounded-xl border border-teal-100 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#0E7B62] animate-pulse" />
-                  <span className="text-[11px] font-black text-[#0E7B62] uppercase tracking-widest">{visits.length} Encounters</span>
+               <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.25em] uppercase mb-4">
+                  <span className="text-slate-400">MediSync</span>
+                  <div className="w-1 h-1 rounded-full bg-slate-300" />
+                  <span className="text-[#00BFA5]">Patient Timeline</span>
+               </div>
+               <h2 className="text-3xl lg:text-[44px] font-black text-slate-900 tracking-tight leading-none mb-4">
+                  Clinical Journey
+               </h2>
+               <div className="flex items-center gap-3">
+                  <div className="px-4 py-2 bg-emerald-50 rounded-xl border border-emerald-100 flex items-center gap-2.5 shadow-sm">
+                     <div className="w-2.5 h-2.5 rounded-full bg-[#00BFA5] animate-pulse" />
+                     <span className="text-[11px] font-black text-[#00BFA5] uppercase tracking-widest">{visits.length} Clinical Encounters</span>
+                  </div>
                </div>
             </div>
          </div>
@@ -86,23 +93,25 @@ export default function History() {
 
                {/* --- Unassigned Records Node --- */}
                {unlinkedReports.length > 0 && (
-                  <div className="relative z-10 mt-20 flex justify-center">
-                     <div className="bg-white border-2 border-dashed border-slate-200 rounded-[32px] p-8 max-w-lg w-full text-center">
-                        <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-400">
-                           <Layers size={32} />
+                  <div className="relative z-10 mt-24 flex justify-center">
+                     <div className="bg-white/40 backdrop-blur-sm border-4 border-dashed border-white/80 rounded-[48px] p-10 max-w-xl w-full text-center shadow-[0_8px_32px_rgba(0,0,0,0.02)]">
+                        <div className="w-20 h-20 bg-slate-100/50 rounded-[28px] flex items-center justify-center mx-auto mb-8 text-slate-400 shadow-inner border border-white/80">
+                           <Layers size={36} strokeWidth={1.5} />
                         </div>
-                        <h3 className="text-xl font-black text-slate-800 mb-2">Unassigned Findings</h3>
-                        <p className="text-sm text-slate-500 font-medium mb-8">
-                           There are {unlinkedReports.length} documents not yet linked to a clinical encounter.
+                        <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Floating Discoveries</h3>
+                        <p className="text-[13px] text-slate-400 font-bold uppercase tracking-widest mb-10">
+                           {unlinkedReports.length} Document{unlinkedReports.length !== 1 ? 's' : ''} awaiting context
                         </p>
-                        <div className="grid grid-cols-1 gap-3">
+                        <div className="grid grid-cols-1 gap-4">
                            {unlinkedReports.slice(0, 3).map(r => (
-                              <div key={r.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                 <div className="flex items-center gap-3">
-                                    <FileText size={18} className="text-slate-400" />
-                                    <span className="text-sm font-bold text-slate-700 truncate max-w-[150px]">{r.file_name}</span>
+                              <div key={r.id} className="flex items-center justify-between p-5 bg-white/60 rounded-[24px] border border-white/80 hover:bg-white transition-all shadow-sm">
+                                 <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
+                                       <FileText size={18} strokeWidth={2.5} />
+                                    </div>
+                                    <span className="text-[14px] font-black text-slate-800 truncate max-w-[180px] tracking-tight">{r.file_name}</span>
                                  </div>
-                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Standalone</span>
+                                 <span className="text-[10px] font-black text-[#00BFA5] uppercase tracking-widest bg-emerald-50 px-3.5 py-1.5 rounded-lg border border-emerald-100/50">Unlinked</span>
                               </div>
                            ))}
                         </div>
@@ -141,9 +150,9 @@ function TimelineRow({ align, visit, reports, onLinkClick, onClick }) {
    return (
       <div className="relative flex flex-col lg:flex-row items-center w-full mb-20 lg:mb-24 group z-10 w-full px-2 lg:px-0">
 
-         {/* Node Dot */}
+         {/* Node Dot with pulsing effect */}
          <div
-            className="absolute left-[16px] lg:left-1/2 top-[22px] lg:top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 lg:w-6 lg:h-6 rounded-full bg-white border-[4px] border-[#0E7B62] shadow-[0_0_0_8px_rgba(14,123,98,0.1)] cursor-pointer hover:scale-[1.3] transition-transform z-10"
+            className="absolute left-[24.5px] lg:left-1/2 top-[50px] lg:top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 lg:w-8 lg:h-8 rounded-full bg-white border-[5px] border-[#00BFA5] shadow-[0_0_0_10px_rgba(0,191,165,0.06)] cursor-pointer hover:scale-[1.2] transition-transform z-20"
             onClick={onClick}
          />
 
@@ -160,37 +169,37 @@ function TimelineRow({ align, visit, reports, onLinkClick, onClick }) {
 
          {/* --- DESKTOP LAYOUT --- */}
          <div className="hidden lg:flex w-full items-center justify-between">
-            <div className="w-[calc(50%-4rem)] flex justify-end text-right">
+            <div className="w-[calc(50%-5rem)] flex justify-end text-right">
                {isLeft ? (
-                  <div className="cursor-pointer group-hover:-translate-x-2 transition-transform duration-300" onClick={onClick}>
-                     <h4 className="text-[12px] font-black text-slate-400 tracking-[0.2em] uppercase mb-2">{date}</h4>
-                     <h3 className="text-[24px] font-black text-slate-900 leading-tight">{visit.diagnosis || 'Clinical Encounter'}</h3>
-                     <div className="flex items-center justify-end gap-3 mt-3">
-                        <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{visit.examine_area}</span>
-                        <div className="w-1 h-1 rounded-full bg-slate-200" />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[150px]">{visit.hospital_name}</span>
+                  <div className="cursor-pointer group-hover:-translate-x-3 transition-all duration-500" onClick={onClick}>
+                     <h4 className="text-[11px] font-black text-slate-400 tracking-[0.25em] uppercase mb-3">{date}</h4>
+                     <h3 className="text-[26px] lg:text-[28px] font-black text-slate-900 leading-[1.1] tracking-tight">{visit.diagnosis || 'Clinical Encounter'}</h3>
+                     <div className="flex items-center justify-end gap-3 mt-4">
+                        <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em] bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100/50">{visit.examine_area}</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                        <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[180px]">{visit.hospital_name}</span>
                      </div>
                   </div>
                ) : (
-                  <div className="w-full max-w-md float-right">
+                  <div className="w-full max-w-lg float-right scale-100 group-hover:scale-[1.02] transition-transform duration-500">
                      <VisitNode visit={visit} reports={reports} onLinkClick={onLinkClick} onClick={onClick} />
                   </div>
                )}
             </div>
 
-            <div className="w-[calc(50%-4rem)] flex justify-start text-left">
+            <div className="w-[calc(50%-5rem)] flex justify-start text-left">
                {!isLeft ? (
-                  <div className="cursor-pointer group-hover:translate-x-2 transition-transform duration-300" onClick={onClick}>
-                     <h4 className="text-[12px] font-black text-slate-400 tracking-[0.2em] uppercase mb-2">{date}</h4>
-                     <h3 className="text-[24px] font-black text-slate-900 leading-tight">{visit.diagnosis || 'Clinical Encounter'}</h3>
-                     <div className="flex items-center gap-3 mt-3">
-                        <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{visit.examine_area}</span>
-                        <div className="w-1 h-1 rounded-full bg-slate-200" />
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[150px]">{visit.hospital_name}</span>
+                  <div className="cursor-pointer group-hover:translate-x-3 transition-all duration-500" onClick={onClick}>
+                     <h4 className="text-[11px] font-black text-slate-400 tracking-[0.25em] uppercase mb-3">{date}</h4>
+                     <h3 className="text-[26px] lg:text-[28px] font-black text-slate-900 leading-[1.1] tracking-tight">{visit.diagnosis || 'Clinical Encounter'}</h3>
+                     <div className="flex items-center gap-3 mt-4">
+                        <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em] bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100/50">{visit.examine_area}</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                        <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[180px]">{visit.hospital_name}</span>
                      </div>
                   </div>
                ) : (
-                  <div className="w-full max-w-md float-left">
+                  <div className="w-full max-w-lg float-left scale-100 group-hover:scale-[1.02] transition-transform duration-500">
                      <VisitNode visit={visit} reports={reports} onLinkClick={onLinkClick} onClick={onClick} />
                   </div>
                )}
@@ -203,55 +212,68 @@ function TimelineRow({ align, visit, reports, onLinkClick, onClick }) {
 function VisitNode({ visit, reports, onLinkClick, onClick }) {
    return (
       <div
-         className="bg-white rounded-[32px] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100 overflow-hidden cursor-pointer"
+         className="bg-slate-50/50 backdrop-blur-sm rounded-[40px] shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-2xl hover:-translate-y-2 hover:bg-white transition-all duration-500 border border-slate-100 overflow-hidden cursor-pointer active:scale-[0.98]"
          onClick={onClick}
       >
-         <div className="p-7 space-y-6">
+         <div className="p-8 space-y-7">
             <div className="flex justify-between items-start">
-               <div className="flex items-center gap-3 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full">
-                  <Stethoscope size={14} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">{visit.examine_area || 'ENCOUNTER'}</span>
+               <div className="flex items-center gap-3 px-4 py-2 bg-indigo-50/80 text-indigo-600 rounded-xl border border-indigo-100/50 shadow-sm">
+                  <Stethoscope size={16} strokeWidth={2.5} />
+                  <span className="text-[10px] font-black uppercase tracking-[0.25em]">{visit.examine_area || 'ENCOUNTER'}</span>
                </div>
                <button
                   onClick={(e) => { e.stopPropagation(); onLinkClick(); }}
-                  className="p-2 text-slate-300 hover:text-[#0E7B62] hover:bg-teal-50 rounded-lg transition-all"
+                  className="w-10 h-10 flex items-center justify-center bg-slate-50/50 text-slate-300 hover:text-[#00BFA5] hover:bg-emerald-50 rounded-[14px] transition-all border border-slate-100"
                   title="Link a document to this visit"
                >
-                  <Plus size={20} />
+                  <Plus size={22} strokeWidth={2.5} />
                </button>
             </div>
 
-            <p className="text-sm text-slate-600 font-medium leading-relaxed line-clamp-2">
-               {visit.notes || visit.diagnosis || 'Routine clinical assessment and monitoring.'}
+            <p className="text-[15px] lg:text-[16px] text-slate-600 font-medium leading-[1.6] line-clamp-3 tracking-tight">
+               {visit.notes || visit.diagnosis || 'Comprehensive clinical record of patient vitals, assessment findings, and diagnostic reasoning during the primary encounter.'}
             </p>
 
             {(reports.length > 0 || visit.prescriptions?.length > 0) && (
-               <div className="pt-4 border-t border-slate-50 space-y-3">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Attachments</p>
-                  <div className="flex flex-wrap gap-2">
-                     {reports.map((r, idx) => (
-                        <div key={idx} className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500 border border-indigo-100" title={r.file_name}>
-                           {r.document_type === 'prescription' ? <PillBottle size={14} /> : <FlaskConical size={14} />}
-                        </div>
-                     ))}
-                     {visit.prescriptions?.map((p, idx) => (
-                        <div key={idx} className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600 border border-teal-100" title={p.medicine_name}>
-                           <PillBottle size={14} />
-                        </div>
-                     ))}
+               <div className="pt-6 border-t border-slate-50 flex items-center gap-6">
+                  <div className="shrink-0">
+                     <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1.5 whitespace-nowrap">Findings Attached</p>
+                     <div className="flex -space-x-2">
+                        {reports.map((r, idx) => (
+                           <div key={idx} className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-indigo-500 border-2 border-slate-50 shadow-sm" title={r.file_name}>
+                              {r.document_type === 'prescription' ? <PillBottle size={16} strokeWidth={2.5} /> : <FlaskConical size={16} strokeWidth={2.5} />}
+                           </div>
+                        ))}
+                        {visit.prescriptions?.map((p, idx) => (
+                           <div key={idx} className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#00BFA5] border-2 border-emerald-50 shadow-sm" title={p.medicine_name}>
+                              <PillBottle size={16} strokeWidth={2.5} />
+                           </div>
+                        ))}
+                     </div>
+                  </div>
+                  <div className="h-10 w-px bg-slate-100 hidden sm:block"></div>
+                  <div className="hidden sm:block">
+                     <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1.5">Impact Score</p>
+                     <div className="flex items-center gap-1">
+                        <div className="w-3 h-1.5 bg-[#00BFA5] rounded-full"></div>
+                        <div className="w-3 h-1.5 bg-[#00BFA5] rounded-full"></div>
+                        <div className="w-3 h-1.5 bg-slate-100 rounded-full"></div>
+                     </div>
                   </div>
                </div>
             )}
          </div>
 
-         <div className="bg-slate-50 px-7 py-4 flex items-center justify-between group-hover:bg-[#0E7B62]/5 transition-colors">
-            <div className="flex items-center gap-2">
-               <Building size={14} className="text-slate-400" />
-               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider truncate max-w-[100px]">{visit.hospital_name}</span>
+         <div className="bg-slate-50/50 px-8 py-5 flex items-center justify-between group-hover:bg-[#00BFA5]/5 transition-colors border-t border-slate-50">
+            <div className="flex items-center gap-2.5">
+               <div className="w-7 h-7 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400">
+                  <Building size={14} />
+               </div>
+               <span className="text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] truncate max-w-[140px]">{visit.hospital_name}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[#0E7B62] animate-pulse">
-               <span className="text-[10px] font-black uppercase tracking-widest">Details</span>
-               <ArrowRight size={14} />
+            <div className="flex items-center gap-2 text-[#00BFA5]">
+               <span className="text-[11px] font-black uppercase tracking-widest">Encounter Data</span>
+               <ArrowRight size={18} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
             </div>
          </div>
       </div>
@@ -418,17 +440,19 @@ function LoadingHistory() {
 
 function EmptyHistory() {
    return (
-      <div className="text-center py-32 bg-slate-50 rounded-[64px] border-2 border-dashed border-slate-200 mt-10 mx-6">
-         <Layers size={64} className="text-slate-200 mx-auto mb-6" />
-         <h3 className="text-2xl font-black text-slate-800 mb-2">Your Timeline is Empty</h3>
-         <p className="text-slate-500 font-medium max-w-sm mx-auto mb-10 text-lg">
-            Start your journey by uploading a medical report or sharing your QR code with a provider.
+      <div className="text-center py-40 border-4 border-dashed border-slate-100 rounded-[64px] mt-10 mx-6 bg-white/40 backdrop-blur-sm">
+         <div className="w-28 h-28 bg-slate-50 rounded-[48px] flex items-center justify-center mx-auto mb-10 shadow-inner border border-slate-100">
+            <Layers size={64} className="text-slate-200" strokeWidth={1} />
+         </div>
+         <h3 className="text-3xl font-black text-slate-800 mb-4 tracking-tight">Timeline Uninitialized</h3>
+         <p className="text-slate-400 font-bold uppercase tracking-[0.2em] max-w-sm mx-auto mb-12 text-[11px]">
+            Secure patient history records will appear once clinical encounters are logged.
          </p>
          <button
             onClick={() => window.location.href = '/medical-records'}
-            className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-[13px] uppercase tracking-wider shadow-xl shadow-slate-900/20 active:scale-95"
+            className="px-12 py-5 bg-slate-900 text-white rounded-[20px] font-black text-[14px] uppercase tracking-widest shadow-2xl shadow-slate-900/40 hover:scale-105 transition-all active:scale-95"
          >
-            Upload First Record
+            Initialize Profile
          </button>
       </div>
    );
