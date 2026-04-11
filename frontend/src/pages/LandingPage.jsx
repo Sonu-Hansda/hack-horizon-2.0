@@ -27,7 +27,7 @@ const TypeWriter = ({ strings }) => {
 };
 
 export default function LandingPage({ onEnterApp }) {
-  
+
   const healthWords = [
     "Medicine",
     "Wellness",
@@ -97,29 +97,6 @@ export default function LandingPage({ onEnterApp }) {
             <img src="./bg3.jpeg" className="w-16 h-12 object-cover rounded-xl" />
           </div>
 
-          {/* Bottom Right Glass Card */}
-          <div className="absolute bottom-12 right-10 md:right-24 max-w-[320px] bg-white/20 backdrop-blur-xl border border-white/30 rounded-[2rem] p-8 shadow-2xl">
-            <div className="absolute -top-6 -left-6 w-12 h-12 opacity-50">
-              {/* Decorative droplet icon / shape, placeholder using svg */}
-              <svg
-                viewBox="0 0 24 24"
-                fill="white"
-                className="w-full h-full drop-shadow-md"
-              >
-                <path d="M12 2.69l5.66 5.66A8 8 0 1 1 6.34 8.35L12 2.69z" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold text-slate-900 leading-tight mb-4 tracking-tight">
-              Stay healthy
-              <br />
-              with Med + Med
-            </h3>
-            <p className="text-slate-600 text-sm font-medium leading-relaxed">
-              Meditation is a tool for the mind to achieve different states of
-              being. Out of thousands of types of meditation, we offer a core of
-              the most simple and effective practices.
-            </p>
-          </div>
 
           {/* Bottom Left Complex "Cut-out" Area */}
           <div className="relative w-full max-w-4xl z-20">
@@ -130,7 +107,7 @@ export default function LandingPage({ onEnterApp }) {
                   Medical
                 </div>
                 <span className="text-sm font-bold text-slate-500 hidden sm:block">
-                  Stay healthy with Med + Med
+                  Stay healthy with Medi Sync
                 </span>
               </div>
 
@@ -151,25 +128,6 @@ export default function LandingPage({ onEnterApp }) {
                   </span>
                 </span>
               </h1>
-
-              {/* Login and Sign Up Action Group */}
-              {/* <div className="absolute bottom-10 right-8 md:right-16 flex items-center gap-3">
-                <button
-                  onClick={onEnterApp}
-                  className="text-sm font-bold text-slate-700 hover:text-slate-900 px-4 transition-colors hidden sm:block"
-                >
-                  Sign in
-                </button>
-                <button
-                  onClick={onEnterApp}
-                  className="group flex items-center gap-4 bg-white hover:bg-slate-50 px-6 py-4 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 transition-all active:scale-95 cursor-pointer"
-                >
-                  <span className="text-sm font-extrabold text-slate-800">
-                    Sign up
-                  </span>
-                  <div className="w-2 h-2 rounded-full bg-slate-900 group-hover:scale-150 transition-transform"></div>
-                </button>
-              </div> */}
 
               {/* The inverted curve connecting right side to background */}
               <div className="absolute bottom-0 -right-12 w-12 h-12 pointer-events-none overflow-hidden">
@@ -432,85 +390,85 @@ export default function LandingPage({ onEnterApp }) {
       </section>
 
       {/* FOOTER */}
-     
 
-<footer className=" mt-16 py-16 border-t bg-gray-600 text-gray-300 rounded-xl">
-  <div className="max-w-7xl mx-auto px-6">
 
-    {/* Top Section */}
-    <div className="flex flex-col lg:flex-row justify-between gap-10">
+      <footer className=" mt-16 py-16 border-t bg-gray-600 text-gray-300 rounded-xl">
+        <div className="max-w-7xl mx-auto px-6">
 
-      {/* Left */}
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-2">
-          <img
-            src="https://www.shadcnblocks.com/images/block/logos/shadcnblockscom-icon.svg"
-            alt="logo"
-            className="h-8"
-          />
-          <h2 className="text-xl font-semibold text-white">YourBrand</h2>
+          {/* Top Section */}
+          <div className="flex flex-col lg:flex-row justify-between gap-10">
+
+            {/* Left */}
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-2">
+                <img
+                  src="/logo.png"
+                  alt="logo"
+                  className="h-8"
+                />
+                <h2 className="text-xl font-semibold text-white">Medi Sync</h2>
+              </div>
+
+              <p className="text-sm max-w-sm text-gray-400">
+                A collection of components for your startup business or side project.
+              </p>
+
+              {/* Social Icons */}
+              <div className="flex gap-5 text-gray-400">
+                <a href="#"><FaInstagram /></a>
+                <a href="#"><FaFacebook /></a>
+                <a href="#"><FaTwitter /></a>
+                <a href="#"><FaLinkedin /></a>
+              </div>
+            </div>
+
+            {/* Links */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+
+              <div>
+                <h3 className="mb-4 font-semibold text-white">Product</h3>
+                <ul className="space-y-2 text-sm">
+                  <li><a href="#">Overview</a></li>
+                  <li><a href="#">Pricing</a></li>
+                  <li><a href="#">Marketplace</a></li>
+                  <li><a href="#">Features</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="mb-4 font-semibold text-white">Company</h3>
+                <ul className="space-y-2 text-sm">
+                  <li><a href="#">About</a></li>
+                  <li><a href="#">Team</a></li>
+                  <li><a href="#">Blog</a></li>
+                  <li><a href="#">Careers</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="mb-4 font-semibold text-white">Resources</h3>
+                <ul className="space-y-2 text-sm">
+                  <li><a href="#">Help</a></li>
+                  <li><a href="#">Sales</a></li>
+                  <li><a href="#">Privacy</a></li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Bottom */}
+          <div className="mt-10 border-t pt-6 flex flex-col md:flex-row justify-between text-xs text-gray-500">
+            <p>© 2026 YourBrand. All rights reserved.</p>
+
+            <div className="flex gap-4 mt-3 md:mt-0">
+              <a href="#">Terms</a>
+              <a href="#">Privacy</a>
+            </div>
+          </div>
+
         </div>
-
-        <p className="text-sm max-w-sm text-gray-400">
-          A collection of components for your startup business or side project.
-        </p>
-
-        {/* Social Icons */}
-        <div className="flex gap-5 text-gray-400">
-          <a href="#"><FaInstagram /></a>
-          <a href="#"><FaFacebook /></a>
-          <a href="#"><FaTwitter /></a>
-          <a href="#"><FaLinkedin /></a>
-        </div>
-      </div>
-
-      {/* Links */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-
-        <div>
-          <h3 className="mb-4 font-semibold text-white">Product</h3>
-          <ul className="space-y-2 text-sm">
-            <li><a href="#">Overview</a></li>
-            <li><a href="#">Pricing</a></li>
-            <li><a href="#">Marketplace</a></li>
-            <li><a href="#">Features</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="mb-4 font-semibold text-white">Company</h3>
-          <ul className="space-y-2 text-sm">
-            <li><a href="#">About</a></li>
-            <li><a href="#">Team</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">Careers</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="mb-4 font-semibold text-white">Resources</h3>
-          <ul className="space-y-2 text-sm">
-            <li><a href="#">Help</a></li>
-            <li><a href="#">Sales</a></li>
-            <li><a href="#">Privacy</a></li>
-          </ul>
-        </div>
-
-      </div>
-    </div>
-
-    {/* Bottom */}
-    <div className="mt-10 border-t pt-6 flex flex-col md:flex-row justify-between text-xs text-gray-500">
-      <p>© 2026 YourBrand. All rights reserved.</p>
-
-      <div className="flex gap-4 mt-3 md:mt-0">
-        <a href="#">Terms</a>
-        <a href="#">Privacy</a>
-      </div>
-    </div>
-
-  </div>
-</footer>
+      </footer>
     </main>
   );
 }
@@ -531,22 +489,6 @@ function Navbar({ onEnterApp }) {
             Track & Care
           </span>
         </div>
-      </div>
-
-      {/* Center Links */}
-      <div className="hidden lg:flex items-center gap-12 text-[14px] font-bold text-black-500/80 tracking-wide">
-        <a href="#" className="hover:text-slate-900 transition-colors">
-          About Us
-        </a>
-        <a href="#" className="hover:text-slate-900 transition-colors">
-          Procedures
-        </a>
-        <a href="#" className="hover:text-slate-900 transition-colors">
-          Skincare
-        </a>
-        <a href="#" className="hover:text-slate-900 transition-colors">
-          Reviews
-        </a>
       </div>
 
       {/* Right Action Buttons */}
